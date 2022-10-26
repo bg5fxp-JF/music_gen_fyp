@@ -9,10 +9,18 @@ function handleFiles(event) {
 	// audioFile.src = blobaudioFile;
 
 	console.log(blobaudioFile);
+	const s = JSON.stringify(blobaudioFile);
+	let blob = files[0];
+	let formData = new FormData();
+	formData.append("audio_file", blob);
+
+	console.log(s);
+	console.log(blob);
 	$.ajax({
 		url: "/test",
 		type: "POST",
-		data: blobaudioFile,
+		contentType: "application/json",
+		data: JSON.stringify(s),
 	});
 }
 

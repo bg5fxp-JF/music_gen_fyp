@@ -4,6 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Beats ML</title>
+		<link rel="shortcut icon" href="#" />
 		<link
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
 			rel="stylesheet"
@@ -95,11 +96,23 @@
 					<label for="formFile" class="form-label"
 						>Select a WAV file only</label
 					>
-					<input class="form-control" accept=".wav" type="file" id="formFile" />
+					<form
+						action="http://127.0.0.1:5000/"
+						method="POST"
+						enctype="multipart/form-data"
+					>
+						{{form.hidden_tag()}} {{form.file(class="form-control",
+						accept=".wav", type="file", id="formFile")}}
+						{{form.submit(class="btn btn-lg btn-secondary fw-bold border-white
+						bg-white")}}
+					</form>
 				</div>
 				<audio id="audio" controls>
 					<source src="" id="src" />
 				</audio>
+				<!-- <form class="form-control" method="POST" enctype="multipart/form-data">
+					{{form.hidden_tag()}} {{form.file()}} {{form.submit()}}
+				</form> -->
 				<!-- <p class="lead">
 					<a
 						href="#"
