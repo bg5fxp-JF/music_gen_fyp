@@ -9,12 +9,14 @@ import os
 from wtforms.validators import InputRequired
 import librosa
 import math
+import wave
+import contextlib
 
 app = Flask(__name__,template_folder="/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/templates")
 app.config['SECRET_KEY'] = 'csmusicfyp'
 app.config['UPLOAD_FOLDER'] = '/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files'
 
-SAMPLE_RATE = 22050
+# SAMPLE_RATE = 22050
 # DURATION = 30 # seconds
 # SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
 class UploadFileForm(FlaskForm):
@@ -22,33 +24,45 @@ class UploadFileForm(FlaskForm):
     submit = SubmitField("Upload File")
 
 
-# def save_mfcc(file, json_path, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5):
+def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5):
     
-#     num_samples_per_segment = int(SAMPLES_PER_TRACK / num_segments)
-#     expected_mfcc_vec_per_segment = math.ceil(num_samples_per_segment / hop_length)
-#     signal, sr = librosa.load(file, sr=SAMPLE_RATE)
+    with contextlib.closing(wave.open(file,'r')) as f:
+        frames = f.getnframes()
+        sample_rate = f.getframerate()
+        duration = frames / float(sample_rate)
+    print(duration)
+
+    samples_per_track = sample_rate * duration
+    num_samples_per_segment = int(samples_per_track / num_segments)
+    expected_mfcc_vec_per_segment = math.ceil(num_samples_per_segment / hop_length)
+    signal, sr = librosa.load(file, sr=sample_rate)
                     
-#     # process segments extracting mfcc and storing data
-#     for s in range(num_segments):
-#         start_sample = num_samples_per_segment * s
-#         finish_sample = start_sample + num_samples_per_segment 
+    # process segments extracting mfcc and storing data
+    for s in range(num_segments):
+        start_sample = num_samples_per_segment * s
+        finish_sample = start_sample + num_samples_per_segment 
         
-#         mfcc = librosa.feature.mfcc(y = signal[start_sample:finish_sample],
-#                                 sr = sr,
-#                                 n_fft = n_fft,
-#                                 n_mfcc = n_mfcc,
-#                                 hop_length = hop_length)
+        mfcc = librosa.feature.mfcc(y = signal[start_sample:finish_sample],
+                                sr = sr,
+                                n_fft = n_fft,
+                                n_mfcc = n_mfcc,
+                                hop_length = hop_length)
         
-#         mfcc = mfcc.T
+        mfcc = mfcc.T
+
+        if len(mfcc) == expected_mfcc_vec_per_segment:
+            print(mfcc.tolist())
+            return mfcc.tolist()
 
 @app.route('/', methods=['GET',"POST"])
 def index():
     form = UploadFileForm()
     if form.validate_on_submit():
         file = form.file.data # First grab the file
-        print (file)
-        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))) # Then save the file
-        print(file.filename)
+        
+        filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
+        file.save(filePath) # Then save the file
+        save_mfcc(filePath, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5)
         return "File has been uploaded."
     return render_template('index.html',form=form)
 
