@@ -4,12 +4,16 @@ function handleFiles(event) {
 	document.getElementById("audio").load();
 	let blobaudioFile = $("#src").attr("src");
 
-	let audioFile = new File();
+	//let audioFile = new File();
 
 	// audioFile.src = blobaudioFile;
 
 	console.log(blobaudioFile);
-	console.log(audioFile);
+	$.ajax({
+		url: "/test",
+		type: "POST",
+		data: blobaudioFile,
+	});
 }
 
 document
@@ -20,13 +24,14 @@ document
 
 // const path = require("path");
 // var dirname = path.dirname(
-// 	"/Users/bg5fxp_jf/Documents/music_gen_fyp/env/web_app/scripts/convertWav.py"
+// 	"/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/scripts/convertWav2.py"
 // );
 // var filename = path.basename(
-// 	"/Users/bg5fxp_jf/Documents/music_gen_fyp/env/web_app/scripts/convertWav.py"
+// 	"/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/scripts/convertWav2.py"
 // );
 
-// const data_to_pass_in = "send this to python";
+// const data_to_pass_in =
+// 	"https://www2.cs.uic.edu/~i101/SoundFiles/ImperialMarch60.wav";
 
 // console.log("Data sent:", data_to_pass_in);
 

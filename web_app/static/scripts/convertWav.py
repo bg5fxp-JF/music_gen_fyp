@@ -13,9 +13,9 @@ from pydub.playback import play
 
 # song = AudioSegment.from_wav("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/scripts/sample1.wav")
 # song = AudioSegment.from_wav("blob:http://127.0.0.1:5500/45e751ed-03d6-4e15-9846-7e78faec5818")
+# Audio(data="/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/scripts/sample.mp3")
 
 # Audio(url="blob:http://127.0.0.1:5500/5df92f8e-d0a7-47c6-8880-efdb799e6ca6")
-Audio(data="/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/scripts/sample.mp3")
 # play(song)
 
 

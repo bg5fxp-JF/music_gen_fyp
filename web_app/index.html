@@ -63,7 +63,10 @@
 				-webkit-overflow-scrolling: touch;
 			}
 		</style>
-		<link href="/web_app/styles/cover.css" rel="stylesheet" />
+		<link
+			href="{{ url_for('static',filename='styles/cover.css') }}"
+			rel="stylesheet"
+		/>
 	</head>
 
 	<body class="d-flex h-100 text-center text-bg-dark">
@@ -87,6 +90,7 @@
 			<main class="px-3">
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+				<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script> -->
 				<div class="mb-3">
 					<label for="formFile" class="form-label"
 						>Select a WAV file only</label
@@ -115,6 +119,9 @@
 			integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
 			crossorigin="anonymous"
 		></script>
-		<script src="/web_app/scripts/musicUpload.js" charset="utf-8"></script>
+		<script
+			src="{{ url_for('static', filename='scripts/musicUpload.js') }}"
+			charset="utf-8"
+		></script>
 	</body>
 </html>
