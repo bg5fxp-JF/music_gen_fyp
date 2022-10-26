@@ -1,5 +1,5 @@
 import json
-
+import numpy as np
 from flask import request
 from flask import Flask, render_template
 from flask_wtf import FlaskForm
@@ -11,11 +11,17 @@ import librosa
 import math
 import wave
 import contextlib
+import pickle
+import joblib
+from tensorflow import keras
 
-app = Flask(__name__,template_folder="/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/templates")
+app = Flask(__name__)
 app.config['SECRET_KEY'] = 'csmusicfyp'
 app.config['UPLOAD_FOLDER'] = '/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files'
 
+#Load the trained model. (Pickle file)
+
+model = keras.models.load_model("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/models/music_classifier_model.h5")
 # SAMPLE_RATE = 22050
 # DURATION = 30 # seconds
 # SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
@@ -24,7 +30,7 @@ class UploadFileForm(FlaskForm):
     submit = SubmitField("Upload File")
 
 
-def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5):
+def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=10):
     
     with contextlib.closing(wave.open(file,'r')) as f:
         frames = f.getnframes()
@@ -51,7 +57,6 @@ def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5):
         mfcc = mfcc.T
 
         if len(mfcc) == expected_mfcc_vec_per_segment:
-            print(mfcc.tolist())
             return mfcc.tolist()
 
 @app.route('/', methods=['GET',"POST"])
@@ -62,8 +67,11 @@ def index():
         
         filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
         file.save(filePath) # Then save the file
-        save_mfcc(filePath, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5)
-        return "File has been uploaded."
+        mfcc = [np.array(save_mfcc(filePath, num_segments=5))]
+        print(mfcc)
+        
+        # prediction = model.predict(mfcc)
+        return prediction
     return render_template('index.html',form=form)
 
 # @app.route('/uploader', methods = ['GET', 'POST'])
