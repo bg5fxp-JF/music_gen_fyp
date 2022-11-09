@@ -67,11 +67,38 @@ def index():
         
         filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
         file.save(filePath) # Then save the file
-        mfcc = [np.array(save_mfcc(filePath, num_segments=5))]
+        mfcc = np.array(save_mfcc(filePath))
         print(mfcc)
+        print(type(mfcc))
+        X_test = mfcc.copy()
+        X_test = X_test[... , np.newaxis]
+        # add a dimension to input data for sample - model.predict() expects a 4d array in this case
+        X = X_test.copy()
         
-        # prediction = model.predict(mfcc)
-        return prediction
+        X = X[np.newaxis, ...] # array shape (1, 130, 13, 1)
+        
+        print(X.shape)
+        X = X.reshape(1,130, 13, 1)
+        # perform prediction
+        prediction = model.predict(X)
+
+        # get index with max value
+        predicted_index = np.argmax(prediction, axis=1)
+
+        # 0 - pop
+        # 1 - metal
+        # 2 - disco
+        # 3 - blues
+        # 4 - reggae
+        # 5 - classical
+        # 6 - rock
+        # 7 - hiphop
+        # 8 - country
+        # 9 - jazz
+
+        print (predicted_index)
+        
+        return "prediction" 
     return render_template('index.html',form=form)
 
 # @app.route('/uploader', methods = ['GET', 'POST'])
