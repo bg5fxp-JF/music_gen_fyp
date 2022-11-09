@@ -22,6 +22,8 @@ app.config['UPLOAD_FOLDER'] = '/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/
 #Load the trained model. (Pickle file)
 
 model = keras.models.load_model("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/models/music_classifier_model.h5")
+
+
 # SAMPLE_RATE = 22050
 # DURATION = 30 # seconds
 # SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
@@ -36,7 +38,7 @@ def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=10):
         frames = f.getnframes()
         sample_rate = f.getframerate()
         duration = frames / float(sample_rate)
-    print(duration)
+    # print(duration)
 
     samples_per_track = sample_rate * duration
     num_samples_per_segment = int(samples_per_track / num_segments)
@@ -60,16 +62,20 @@ def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=10):
             return mfcc.tolist()
 
 @app.route('/', methods=['GET',"POST"])
-def index():
+def index():     
+    identified_genre = ""
+    recommended = ""
+    filePath2 =""
     form = UploadFileForm()
     if form.validate_on_submit():
         file = form.file.data # First grab the file
         
         filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
+        filePath2 = "../static/files/" + file.filename
         file.save(filePath) # Then save the file
         mfcc = np.array(save_mfcc(filePath))
-        print(mfcc)
-        print(type(mfcc))
+        # print(mfcc)
+        # print(type(mfcc))
         X_test = mfcc.copy()
         X_test = X_test[... , np.newaxis]
         # add a dimension to input data for sample - model.predict() expects a 4d array in this case
@@ -77,29 +83,111 @@ def index():
         
         X = X[np.newaxis, ...] # array shape (1, 130, 13, 1)
         
-        print(X.shape)
-        X = X.reshape(1,130, 13, 1)
+    
         # perform prediction
         prediction = model.predict(X)
 
         # get index with max value
         predicted_index = np.argmax(prediction, axis=1)
 
-        # 0 - pop
-        # 1 - metal
-        # 2 - disco
-        # 3 - blues
-        # 4 - reggae
-        # 5 - classical
-        # 6 - rock
-        # 7 - hiphop
-        # 8 - country
-        # 9 - jazz
-
-        print (predicted_index)
+        pop = ['Pop','hiphop, r&b or reggaeton']
+        metal = ['Metal','hiphop or drill']
+        disco = ['Disco','r&b or reggaeton']
+        blues = ['Blues','hiphop, r&b or drill']
+        reggae = ['Reggae','hiphop, r&b or reggaeton']
+        classical = ['Classical','hiphop or drill']
+        rock = ['Rock','hiphop, r&b or drill']
+        hiphop = ['Hiphop','r&b, reggaeton or drill']
+        country = ['Country','... Actually I dont know what goes good with country 🤔 but feel free to try remix with anything :)']
+        jazz = ['Jazz','hiphop, r&b, reggaeton or drill']
+ 
+        # print (predicted_index)
+        switcher={
+            0:pop,
+            1:metal,
+            2:disco,
+            3:blues,
+            4:reggae,
+            5:classical,
+            6:rock,
+            7:hiphop,
+            8:country,
+            9:jazz
+        }
+        selected = switcher.get((int)(predicted_index),"Can't Identify")
+        n = len(selected)
+        identified_genre = selected[0]
+        recommended = 'Try remmixing with {}'.format(selected[1])
         
-        return "prediction" 
-    return render_template('index.html',form=form)
+    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2)
+
+# @app.route('/predict',methods=['GET',"POST"])
+# def predict():
+#     form = UploadFileForm()
+#     if form.validate_on_submit():
+#         file = form.file.data # First grab the file
+        
+#         filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
+#         file.save(filePath) # Then save the file
+#         mfcc = np.array(save_mfcc(filePath))
+#         # print(mfcc)
+#         # print(type(mfcc))
+#         X_test = mfcc.copy()
+#         X_test = X_test[... , np.newaxis]
+#         # add a dimension to input data for sample - model.predict() expects a 4d array in this case
+#         X = X_test.copy()
+        
+#         X = X[np.newaxis, ...] # array shape (1, 130, 13, 1)
+        
+    
+#         # perform prediction
+#         prediction = model.predict(X)
+
+#         # get index with max value
+#         predicted_index = np.argmax(prediction, axis=1)
+
+#         pop = ['Pop','hiphop','r&b','reggaeton']
+#         metal = ['Metal','hiphop','drill']
+#         disco = ['Disco','r&b','reggaeton']
+#         blues = ['Blues','hiphop','r&b','drill']
+#         reggae = ['Reggae','hiphop','r&b','reggaeton']
+#         classical = ['Classical','hiphop','drill']
+#         rock = ['Rock','hiphop','r&b','drill']
+#         hiphop = ['Hiphop','r&b','reggaeton','drill']
+#         country = ['Country','None I dont like country... but feel free to try remix with anything :)']
+#         jazz = ['Jazz','hiphop','r&b','reggaeton','drill']
+#         # 0 - pop
+#         # 1 - metal
+#         # 2 - disco
+#         # 3 - blues
+#         # 4 - reggae
+#         # 5 - classical
+#         # 6 - rock
+#         # 7 - hiphop
+#         # 8 - country
+#         # 9 - jazz
+
+#         # print (predicted_index)
+#         switcher={
+#             0:pop,
+#             1:metal,
+#             2:disco,
+#             3:blues,
+#             4:reggae,
+#             5:classical,
+#             6:rock,
+#             7:hiphop,
+#             8:country,
+#             9:jazz
+#         }
+#         selected = switcher.get((int)(predicted_index),"Can't Identify")
+#         n = len(selected)
+#         identified_genre = selected[0]
+#         recommended = selected[1:n]
+        
+#     return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text='Try remmixing with {}'.format(recommended))
+
+
 
 # @app.route('/uploader', methods = ['GET', 'POST'])
 # def upload_file():

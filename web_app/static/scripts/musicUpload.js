@@ -1,32 +1,32 @@
-function handleFiles(event) {
-	var files = event.target.files;
-	$("#src").attr("src", URL.createObjectURL(files[0]));
-	document.getElementById("audio").load();
-	let blobaudioFile = $("#src").attr("src");
+// function handleFiles(event) {
+// 	var files = event.target.files;
+// 	$("#src").attr("src", URL.createObjectURL(files[0]));
+// 	document.getElementById("audio").load();
+// 	let blobaudioFile = $("#src").attr("src");
 
-	//let audioFile = new File();
+// 	//let audioFile = new File();
 
-	// audioFile.src = blobaudioFile;
+// 	// audioFile.src = blobaudioFile;
 
-	console.log(blobaudioFile);
-	const s = JSON.stringify(blobaudioFile);
-	let blob = files[0];
-	let formData = new FormData();
-	formData.append("audio_file", blob);
+// 	console.log(blobaudioFile);
+// 	const s = JSON.stringify(blobaudioFile);
+// 	let blob = files[0];
+// 	let formData = new FormData();
+// 	formData.append("audio_file", blob);
 
-	console.log(s);
-	console.log(blob);
-	$.ajax({
-		url: "/test",
-		type: "POST",
-		contentType: "application/json",
-		data: JSON.stringify(s),
-	});
-}
+// 	console.log(s);
+// 	console.log(blob);
+// 	$.ajax({
+// 		url: "/test",
+// 		type: "POST",
+// 		contentType: "application/json",
+// 		data: JSON.stringify(s),
+// 	});
+// }
 
-document
-	.getElementById("formFile")
-	.addEventListener("change", handleFiles, false);
+// document
+// 	.getElementById("formFile")
+// 	.addEventListener("change", handleFiles, false);
 
 // const spawner = require("child_process").spawn;
 

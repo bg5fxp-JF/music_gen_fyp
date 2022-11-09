@@ -56,3 +56,7 @@ body {
 .container-explain.space-between {
 	justify-content: space-between;
 }
+
+.predicted-genre {
+	font-size: 5em;
+}

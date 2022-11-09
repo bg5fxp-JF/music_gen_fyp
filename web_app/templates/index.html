@@ -87,17 +87,20 @@
 					</div>
 				</div>
 			</header>
-
 			<main class="px-3">
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 				<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script> -->
+				<div class="pb-5">
+					<h1 class="predicted-genre">{{prediction_text}}</h1>
+					<p class="lead">{{recommend_text}}</p>
+				</div>
 				<div class="mb-3">
 					<label for="formFile" class="form-label"
 						>Select a WAV file only</label
 					>
 					<form
-						action="http://127.0.0.1:5000/"
+						action="http://127.0.0.1:5000"
 						method="POST"
 						enctype="multipart/form-data"
 					>
@@ -108,8 +111,9 @@
 					</form>
 				</div>
 				<audio id="audio" controls>
-					<source src="" id="src" />
+					<source src="{{filePath}}" id="src" type="audio/wav" />
 				</audio>
+
 				<!-- <form class="form-control" method="POST" enctype="multipart/form-data">
 					{{form.hidden_tag()}} {{form.file()}} {{form.submit()}}
 				</form> -->
