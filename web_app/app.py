@@ -66,12 +66,14 @@ def index():
     identified_genre = ""
     recommended = ""
     filePath2 =""
+    fileName = ""
     form = UploadFileForm()
     if form.validate_on_submit():
         file = form.file.data # First grab the file
         
         filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
         filePath2 = "../static/files/" + file.filename
+        fileName = file.filename
         file.save(filePath) # Then save the file
         mfcc = np.array(save_mfcc(filePath))
         # print(mfcc)
@@ -119,7 +121,7 @@ def index():
         identified_genre = selected[0]
         recommended = 'Try remmixing with {}'.format(selected[1])
         
-    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2)
+    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName)
 
 # @app.route('/predict',methods=['GET',"POST"])
 # def predict():

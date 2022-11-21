@@ -60,3 +60,26 @@ body {
 .predicted-genre {
 	font-size: 5em;
 }
+
+.music {
+	padding: 30px;
+	border-radius: 8px;
+	text-align: left;
+	margin: 0 auto;
+}
+
+.track {
+	display: flex;
+	align-items: center;
+	margin-top: 20px;
+}
+
+.track img {
+	width: 40px;
+	margin-right: 30px;
+	cursor: pointer;
+}
+
+.track div {
+	flex: 1;
+}

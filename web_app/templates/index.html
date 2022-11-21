@@ -11,6 +11,7 @@
 			integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
 			crossorigin="anonymous"
 		/>
+
 		<style>
 			.bd-placeholder-img {
 				font-size: 1.125rem;
@@ -68,6 +69,7 @@
 			href="{{ url_for('static',filename='styles/cover.css') }}"
 			rel="stylesheet"
 		/>
+		<script src="https://unpkg.com/wavesurfer.js"></script>
 	</head>
 
 	<body class="d-flex h-100 text-center text-bg-dark">
@@ -107,23 +109,20 @@
 						{{form.hidden_tag()}} {{form.file(class="form-control",
 						accept=".wav", type="file", id="formFile")}}
 						{{form.submit(class="btn btn-lg btn-secondary fw-bold border-white
-						bg-white")}}
+						bg-white", onclick="sayHi()")}}
 					</form>
 				</div>
-				<audio id="audio" controls>
-					<source src="{{filePath}}" id="src" type="audio/wav" />
-				</audio>
+				<!-- <audio id="audio" controls>
+					<source src="{{filePath}}" id="fileinput" type="audio/wav" />
+				</audio> -->
 
-				<!-- <form class="form-control" method="POST" enctype="multipart/form-data">
-					{{form.hidden_tag()}} {{form.file()}} {{form.submit()}}
-				</form> -->
-				<!-- <p class="lead">
-					<a
-						href="#"
-						class="btn btn-lg btn-secondary fw-bold border-white bg-white"
-						>Upload Song</a
-					>
-				</p> -->
+				<div class="music">
+					<h5>{{fileName}}</h5>
+					<div class="track">
+						<img src="../static/images/play.png" id="playBtn" />
+						<div id="waveform"></div>
+					</div>
+				</div>
 			</main>
 
 			<footer class="mt-auto text-white-50">
@@ -136,8 +135,39 @@
 			integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
 			crossorigin="anonymous"
 		></script>
+		<script type="text/javascript">
+			var playBtn = document.getElementById("playBtn");
+			var wavesurfer = WaveSurfer.create({
+				container: "#waveform",
+				waveColor: "white",
+				progressColor: "grey",
+				barWidth: 4,
+				responsive: true,
+				height: 90,
+				barRadius: 4,
+			});
+
+			let audio = new Audio();
+			audio.src = "{{filePath}}";
+
+			playBtn.onclick = function () {
+				wavesurfer.playPause();
+				if (playBtn.src.includes("play.png")) {
+					playBtn.src = "../static/images/pause.png";
+				} else {
+					playBtn.src = "../static/images/play.png";
+				}
+			};
+
+			wavesurfer.on("finish", function () {
+				playBtn.src = "../static/images/play.png";
+				wavesurfer.stop();
+			});
+
+			console.log(audio.src);
+		</script>
 		<script
-			src="{{ url_for('static', filename='scripts/musicUpload.js') }}"
+			src="{{ url_for('static', filename='scripts/musicLoop.js') }}"
 			charset="utf-8"
 		></script>
 	</body>
