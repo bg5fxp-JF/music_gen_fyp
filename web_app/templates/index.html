@@ -150,6 +150,8 @@
 			let audio = new Audio();
 			audio.src = "{{filePath}}";
 
+			wavesurfer.load(audio);
+
 			playBtn.onclick = function () {
 				wavesurfer.playPause();
 				if (playBtn.src.includes("play.png")) {
