@@ -11,7 +11,7 @@ import librosa
 import math
 import wave
 import contextlib
-import pydub
+from pydub import AudioSegment
 from spleeter.separator import Separator
 import pickle
 import joblib
@@ -63,10 +63,16 @@ def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=10):
         if len(mfcc) == expected_mfcc_vec_per_segment:
             return mfcc.tolist()
 
-def split_audio_stems(filePath):
+def split_audio_stems(filePath,fileName):
     separator = Separator('spleeter:4stems')
     separator.separate_to_file(filePath, "/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split")
     # !spleeter separate -p spleeter:4stems -o output/ reggae.00009.wav
+    sound1 = AudioSegment.from_file("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/other.wav")
+    sound2 = AudioSegment.from_file("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/bass.wav")
+
+    combined = sound1.overlay(sound2)
+
+    combined.export("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/combined.wav", format='wav')
     print("Splitting audio")
 
 @app.route('/', methods=['GET',"POST"])
@@ -81,7 +87,7 @@ def index():
         
         filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
         
-        filePath2 = "../static/files/" + file.filename
+        # filePath2 = "../static/files/" + file.filename
 
         fileName = file.filename
         file.save(filePath) # Then save the file
@@ -131,7 +137,9 @@ def index():
         n = len(selected)
         identified_genre = selected[0]
         recommended = 'Try remmixing with {}'.format(selected[1])
-        split_audio_stems(filePath)
+        split_audio_stems(filePath,fileName)
+        filePath2 = "../static/files_split/" + fileName[:-4]+"/combined.wav"
+        
         
     return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName)
 
