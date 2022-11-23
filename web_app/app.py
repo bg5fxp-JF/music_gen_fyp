@@ -66,14 +66,14 @@ def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=10):
 def split_audio_stems(filePath,fileName):
     separator = Separator('spleeter:4stems')
     separator.separate_to_file(filePath, "/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split")
-    # !spleeter separate -p spleeter:4stems -o output/ reggae.00009.wav
+
+    # combining melody and bass stems together
     sound1 = AudioSegment.from_file("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/other.wav")
     sound2 = AudioSegment.from_file("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/bass.wav")
-
     combined = sound1.overlay(sound2)
 
     combined.export("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/combined.wav", format='wav')
-    print("Splitting audio")
+    
 
 @app.route('/', methods=['GET',"POST"])
 def index():     
@@ -86,22 +86,17 @@ def index():
         file = form.file.data # First grab the file
         
         filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
-        
-        # filePath2 = "../static/files/" + file.filename
 
         fileName = file.filename
         file.save(filePath) # Then save the file
         
         mfcc = np.array(save_mfcc(filePath))
-        # print(mfcc)
-        # print(type(mfcc))
         X_test = mfcc.copy()
         X_test = X_test[... , np.newaxis]
         # add a dimension to input data for sample - model.predict() expects a 4d array in this case
         X = X_test.copy()
         
         X = X[np.newaxis, ...] # array shape (1, 130, 13, 1)
-        
     
         # perform prediction
         prediction = model.predict(X)
@@ -119,8 +114,7 @@ def index():
         hiphop = ['Hiphop','r&b, reggaeton or drill']
         country = ['Country','... Actually I dont know what goes good with country 🤔 but feel free to try remix with anything :)']
         jazz = ['Jazz','hiphop, r&b, reggaeton or drill']
- 
-        # print (predicted_index)
+
         switcher={
             0:pop,
             1:metal,
@@ -142,91 +136,6 @@ def index():
         
         
     return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName)
-
-# @app.route('/predict',methods=['GET',"POST"])
-# def predict():
-#     form = UploadFileForm()
-#     if form.validate_on_submit():
-#         file = form.file.data # First grab the file
-        
-#         filePath = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
-#         file.save(filePath) # Then save the file
-#         mfcc = np.array(save_mfcc(filePath))
-#         # print(mfcc)
-#         # print(type(mfcc))
-#         X_test = mfcc.copy()
-#         X_test = X_test[... , np.newaxis]
-#         # add a dimension to input data for sample - model.predict() expects a 4d array in this case
-#         X = X_test.copy()
-        
-#         X = X[np.newaxis, ...] # array shape (1, 130, 13, 1)
-        
-    
-#         # perform prediction
-#         prediction = model.predict(X)
-
-#         # get index with max value
-#         predicted_index = np.argmax(prediction, axis=1)
-
-#         pop = ['Pop','hiphop','r&b','reggaeton']
-#         metal = ['Metal','hiphop','drill']
-#         disco = ['Disco','r&b','reggaeton']
-#         blues = ['Blues','hiphop','r&b','drill']
-#         reggae = ['Reggae','hiphop','r&b','reggaeton']
-#         classical = ['Classical','hiphop','drill']
-#         rock = ['Rock','hiphop','r&b','drill']
-#         hiphop = ['Hiphop','r&b','reggaeton','drill']
-#         country = ['Country','None I dont like country... but feel free to try remix with anything :)']
-#         jazz = ['Jazz','hiphop','r&b','reggaeton','drill']
-#         # 0 - pop
-#         # 1 - metal
-#         # 2 - disco
-#         # 3 - blues
-#         # 4 - reggae
-#         # 5 - classical
-#         # 6 - rock
-#         # 7 - hiphop
-#         # 8 - country
-#         # 9 - jazz
-
-#         # print (predicted_index)
-#         switcher={
-#             0:pop,
-#             1:metal,
-#             2:disco,
-#             3:blues,
-#             4:reggae,
-#             5:classical,
-#             6:rock,
-#             7:hiphop,
-#             8:country,
-#             9:jazz
-#         }
-#         selected = switcher.get((int)(predicted_index),"Can't Identify")
-#         n = len(selected)
-#         identified_genre = selected[0]
-#         recommended = selected[1:n]
-        
-#     return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text='Try remmixing with {}'.format(recommended))
-
-
-
-# @app.route('/uploader', methods = ['GET', 'POST'])
-# def upload_file():
-#    if request.method == 'POST':
-#       f = request.files['file']
-#       f.save(secure_filename(f.filename))
-#       return 'file uploaded successfully'
-
-@app.route('/test', methods=['POST'])
-def test():
-    output = request.get_json()
-    # print(output) # This is the output that was stored in the JSON within the browser
-    # print(type(output))
-    result = json.loads(output) #this converts the json output to a python dictionary
-    print(result) # Printing the new dictionary
-    # print(type(result))#this shows the json converted as a python dictionary
-    return result
 
 
 if __name__ == '__main__':
