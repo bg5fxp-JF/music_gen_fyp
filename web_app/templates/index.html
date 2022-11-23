@@ -64,6 +64,54 @@
 				white-space: nowrap;
 				-webkit-overflow-scrolling: touch;
 			}
+			/* Loading element */
+			.lds-facebook {
+				display: inline-block;
+				position: relative;
+				width: 80px;
+				height: 80px;
+				animation: fadeIn 2s;
+				opacity: 1;
+			}
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+			.lds-facebook div {
+				display: inline-block;
+				position: absolute;
+				left: 8px;
+				width: 16px;
+				background: #fff;
+				animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+			}
+			.lds-facebook div:nth-child(1) {
+				left: 8px;
+				animation-delay: -0.24s;
+			}
+			.lds-facebook div:nth-child(2) {
+				left: 32px;
+				animation-delay: -0.12s;
+			}
+			.lds-facebook div:nth-child(3) {
+				left: 56px;
+				animation-delay: 0;
+			}
+			@keyframes lds-facebook {
+				0% {
+					top: 8px;
+					height: 64px;
+				}
+				50%,
+				100% {
+					top: 24px;
+					height: 32px;
+				}
+			}
 		</style>
 		<link
 			href="{{ url_for('static',filename='styles/cover.css') }}"
@@ -94,7 +142,17 @@
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 				<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script> -->
 				<div class="pb-5">
-					<h1 class="predicted-genre">{{prediction_text}}</h1>
+					<div
+						id="loading"
+						class="lds-facebook"
+						style="display: none; visibility: hidden"
+					>
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+
+					<h1 id="predicts" class="predicted-genre">{{prediction_text}}</h1>
 					<p class="lead">{{recommend_text}}</p>
 				</div>
 				<div class="mb-3">
@@ -109,7 +167,7 @@
 						{{form.hidden_tag()}} {{form.file(class="form-control",
 						accept=".wav", type="file", id="formFile")}}
 						{{form.submit(class="btn btn-lg btn-secondary fw-bold border-white
-						bg-white", onclick="sayHi()")}}
+						bg-white", onclick="preloader()")}}
 					</form>
 				</div>
 				<!-- <audio id="audio" controls>
@@ -135,6 +193,12 @@
 			integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
 			crossorigin="anonymous"
 		></script>
+		<script>
+			function preloader() {
+				document.getElementById("loading").style.visibility = "visible";
+				document.getElementById("loading").style.display = "inline-block";
+			}
+		</script>
 		<script type="text/javascript">
 			var playBtn = document.getElementById("playBtn");
 			var wavesurfer = WaveSurfer.create({
