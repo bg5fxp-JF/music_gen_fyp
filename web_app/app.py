@@ -73,7 +73,12 @@ def split_audio_stems(filePath,fileName):
     combined = sound1.overlay(sound2)
 
     combined.export("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/combined.wav", format='wav')
-    
+
+def get_bpm(fileName):
+    y, sr = librosa.load("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files/"+fileName) 
+    tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
+
+    return int(round(tempo))
 
 @app.route('/', methods=['GET',"POST"])
 def index():     
@@ -81,6 +86,7 @@ def index():
     recommended = ""
     filePath2 =""
     fileName = ""
+    bpm = 0
     form = UploadFileForm()
     if form.validate_on_submit():
         file = form.file.data # First grab the file
@@ -89,7 +95,7 @@ def index():
 
         fileName = file.filename
         file.save(filePath) # Then save the file
-        
+        bpm = get_bpm(fileName)
         mfcc = np.array(save_mfcc(filePath))
         X_test = mfcc.copy()
         X_test = X_test[... , np.newaxis]
@@ -135,7 +141,7 @@ def index():
         filePath2 = "../static/files_split/" + fileName[:-4]+"/combined.wav"
         
         
-    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName)
+    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm)
 
 
 if __name__ == '__main__':
