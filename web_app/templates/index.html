@@ -28,7 +28,7 @@
 			}
 
 			.b-example-divider {
-				height: 3rem;
+				height: 5rem;
 				background-color: rgba(0, 0, 0, 0.1);
 				border: solid rgba(0, 0, 0, 0.15);
 				border-width: 1px 0;
@@ -114,14 +114,14 @@
 			}
 		</style>
 		<link
-			href="{{ url_for('static',filename='styles/cover.css') }}"
+			href="{{ url_for('static',filename='styles/styles5.css') }}"
 			rel="stylesheet"
 		/>
 		<script src="https://unpkg.com/wavesurfer.js"></script>
 	</head>
 
-	<body class="d-flex h-100 text-center text-bg-dark">
-		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+	<body class="text-center text-bg-dark">
+		<div class="cover-container w-100 p-3 mx-auto flex-column">
 			<header class="mb-auto">
 				<div>
 					<h3 class="float-md-center mb-0">Beats ML</h3>
@@ -181,7 +181,122 @@
 						<div id="waveform"></div>
 					</div>
 				</div>
+
+				<div class="progress">
+					<div></div>
+				</div>
+
+				<div class="app" style="display: none">
+					<div style="display: inline">
+						<button
+							class="regenerate btn btn-secondary fw-bold border-white bg-white"
+							style="margin: auto"
+						>
+							Generate Pattern
+						</button>
+						<label for="bars" style="margin: auto; padding-left: 20vw"
+							>Bars:</label
+						>
+						<input
+							style="margin: auto"
+							type="number"
+							id="bars"
+							name="bars"
+							min="16"
+							max="32"
+							step="16"
+							value="16"
+							oninput="this.nextElementSibling.value = this.value"
+						/>
+					</div>
+					<div class="sequencer">
+						<div class="steps"></div>
+					</div>
+
+					<div class="controls">
+						<div class="control">
+							<p>
+								Density
+								<input
+									class="slider"
+									type="range"
+									id="density"
+									min="0"
+									max="0.75"
+									value="0"
+									step="0.05"
+									oninput="this.nextElementSibling.value = this.value"
+								/>
+								<output>0</output>
+							</p>
+						</div>
+						<div class="control">
+							<p>
+								Tempo
+								<input
+									class="slider"
+									type="range"
+									id="tempo"
+									min="20"
+									max="240"
+									value="120"
+									step="1"
+									oninput="this.nextElementSibling.value = this.value"
+								/>
+								<output>120</output>
+							</p>
+						</div>
+						<div class="control">
+							<p>
+								Swing
+								<input
+									class="slider"
+									type="range"
+									id="swing"
+									min="0.5"
+									max="0.7"
+									value="0.55"
+									step="0.05"
+									oninput="this.nextElementSibling.value = this.value"
+								/>
+								<output>0.55</output>
+							</p>
+						</div>
+						<div class="control">
+							<p>
+								Temperature
+								<input
+									class="slider"
+									type="range"
+									id="temperature"
+									min="0.5"
+									max="2"
+									value="1.1"
+									step="0.1"
+									data-tooltip="Higher temperatures will make the neural network generates wilder patterns"
+									data-delay="500"
+									oninput="this.nextElementSibling.value = this.value"
+								/>
+
+								<output>1.1</output>
+							</p>
+						</div>
+						<!-- <div class="control">
+							<a
+								class="playpause btn-floating btn-large waves-effect waves-light blue"
+							>
+								<i class="material-icons play-icon">play_arrow</i>
+								<i class="material-icons pause-icon" style="display: none"
+									>pause</i
+								>
+							</a>
+						</div> -->
+					</div>
+				</div>
 			</main>
+			<br />
+			<br />
+			<br />
 
 			<footer class="mt-auto text-white-50">
 				<p>Beats Ml is pretty cool.</p>
@@ -234,6 +349,24 @@
 		</script>
 		<script
 			src="{{ url_for('static', filename='scripts/musicLoop.js') }}"
+			charset="utf-8"
+		></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+		<script
+			type="text/javascript"
+			src="https://cdn.jsdelivr.net/npm/lodash@4.17.5/lodash.min.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://gogul09.github.io/js/tone.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://cdn.jsdelivr.net/npm/@magenta/music@0.0.8/dist/magentamusic.min.js"
+		></script>
+		<script src="https://cdn.jsdelivr.net/npm/webmidi@latest/dist/iife/webmidi.iife.js"></script>
+		<script
+			src="{{ url_for('static', filename='scripts/drumSequencer.js') }}"
 			charset="utf-8"
 		></script>
 	</body>
