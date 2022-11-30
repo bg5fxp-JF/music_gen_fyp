@@ -177,7 +177,11 @@
 				<div class="music">
 					<h5>{{fileName}}</h5>
 					<div class="track">
-						<img src="../static/images/play.png" id="playBtn" />
+						<img
+							src="../static/images/play.png"
+							id="playBtn"
+							class="playpause"
+						/>
 						<div id="waveform"></div>
 					</div>
 				</div>
@@ -186,102 +190,103 @@
 					<div></div>
 				</div>
 
-				<div class="app" style="display: none">
-					<div style="display: inline">
-						<button
-							class="regenerate btn btn-secondary fw-bold border-white bg-white"
-							style="margin: auto"
-						>
-							Generate Pattern
-						</button>
-						<label for="bars" style="margin: auto; padding-left: 20vw"
-							>Bars:</label
-						>
-						<input
-							style="margin: auto"
-							type="number"
-							id="bars"
-							name="bars"
-							min="16"
-							max="32"
-							step="16"
-							value="16"
-							oninput="this.nextElementSibling.value = this.value"
-						/>
-					</div>
-					<div class="sequencer">
-						<div class="steps"></div>
-					</div>
+				<div id="drum_pad" style="display: none; visibility: hidden">
+					<div class="app" style="display: none">
+						<div style="display: inline">
+							<button
+								class="regenerate btn btn-secondary fw-bold border-white bg-white"
+								style="margin: auto"
+							>
+								Generate Pattern
+							</button>
+							<label for="bars" style="margin: auto; padding-left: 20vw"
+								>Bars:</label
+							>
+							<input
+								style="margin: auto"
+								type="number"
+								id="bars"
+								name="bars"
+								min="16"
+								max="32"
+								step="16"
+								value="16"
+								oninput="this.nextElementSibling.value = this.value"
+							/>
+						</div>
+						<div class="sequencer">
+							<div class="steps"></div>
+						</div>
 
-					<div class="controls">
-						<div class="control">
-							<p>
-								Density
-								<input
-									class="slider"
-									type="range"
-									id="density"
-									min="0"
-									max="0.75"
-									value="0"
-									step="0.05"
-									oninput="this.nextElementSibling.value = this.value"
-								/>
-								<output>0</output>
-							</p>
-						</div>
-						<div class="control">
-							<p>
-								Tempo
-								<input
-									class="slider"
-									type="range"
-									id="tempo"
-									min="20"
-									max="240"
-									value="120"
-									step="1"
-									oninput="this.nextElementSibling.value = this.value"
-								/>
-								<output>120</output>
-							</p>
-						</div>
-						<div class="control">
-							<p>
-								Swing
-								<input
-									class="slider"
-									type="range"
-									id="swing"
-									min="0.5"
-									max="0.7"
-									value="0.55"
-									step="0.05"
-									oninput="this.nextElementSibling.value = this.value"
-								/>
-								<output>0.55</output>
-							</p>
-						</div>
-						<div class="control">
-							<p>
-								Temperature
-								<input
-									class="slider"
-									type="range"
-									id="temperature"
-									min="0.5"
-									max="2"
-									value="1.1"
-									step="0.1"
-									data-tooltip="Higher temperatures will make the neural network generates wilder patterns"
-									data-delay="500"
-									oninput="this.nextElementSibling.value = this.value"
-								/>
+						<div class="controls">
+							<div class="control">
+								<p>
+									Density
+									<input
+										class="slider"
+										type="range"
+										id="density"
+										min="0"
+										max="0.75"
+										value="0"
+										step="0.05"
+										oninput="this.nextElementSibling.value = this.value"
+									/>
+									<output>0</output>
+								</p>
+							</div>
+							<div class="control">
+								<p>
+									Tempo
+									<input
+										class="slider"
+										type="range"
+										id="tempo"
+										min="20"
+										max="240"
+										value="{{bpm}}"
+										step="1"
+										oninput="this.nextElementSibling.value = this.value"
+									/>
+									<output>{{bpm}}</output>
+								</p>
+							</div>
+							<div class="control">
+								<p>
+									Swing
+									<input
+										class="slider"
+										type="range"
+										id="swing"
+										min="0.5"
+										max="0.7"
+										value="0.55"
+										step="0.05"
+										oninput="this.nextElementSibling.value = this.value"
+									/>
+									<output>0.55</output>
+								</p>
+							</div>
+							<div class="control">
+								<p>
+									Temperature
+									<input
+										class="slider"
+										type="range"
+										id="temperature"
+										min="0.5"
+										max="2"
+										value="1.1"
+										step="0.1"
+										data-tooltip="Higher temperatures will make the neural network generates wilder patterns"
+										data-delay="500"
+										oninput="this.nextElementSibling.value = this.value"
+									/>
 
-								<output>1.1</output>
-							</p>
-						</div>
-						<!-- <div class="control">
+									<output>1.1</output>
+								</p>
+							</div>
+							<!-- <div class="control">
 							<a
 								class="playpause btn-floating btn-large waves-effect waves-light blue"
 							>
@@ -291,6 +296,7 @@
 								>
 							</a>
 						</div> -->
+						</div>
 					</div>
 				</div>
 			</main>
@@ -298,7 +304,7 @@
 			<br />
 			<br />
 
-			<footer class="mt-auto text-white-50">
+			<footer class="mt-auto text-white-50 fixed-bottom">
 				<p>Beats Ml is pretty cool.</p>
 			</footer>
 		</div>
@@ -309,6 +315,11 @@
 			crossorigin="anonymous"
 		></script>
 		<script>
+			var h1Check = document.getElementById("predicts").innerHTML;
+			if (h1Check !== "") {
+				document.getElementById("drum_pad").style.visibility = "visible";
+				document.getElementById("drum_pad").style.display = "inline-block";
+			}
 			function preloader() {
 				document.getElementById("loading").style.visibility = "visible";
 				document.getElementById("loading").style.display = "inline-block";
@@ -344,8 +355,6 @@
 				playBtn.src = "../static/images/play.png";
 				wavesurfer.stop();
 			});
-
-			console.log(audio.src);
 		</script>
 		<script
 			src="{{ url_for('static', filename='scripts/musicLoop.js') }}"

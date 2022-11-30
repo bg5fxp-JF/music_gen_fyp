@@ -581,24 +581,24 @@ Promise.all([
 			}
 		});
 	});
-	// document.querySelector(".playpause").addEventListener("click", (event) => {
-	// 	event.preventDefault();
-	// 	document.querySelector(".playpause").classList.remove("pulse");
-	// 	if (Tone.Transport.state !== "started") {
-	// 		Tone.context.resume();
-	// 		Tone.Transport.start();
-	// 		playPattern();
-	// 		updatePlayPauseIcons();
-	// 		hasBeenStarted = true;
-	// 	} else {
-	// 		if (sequence) {
-	// 			sequence.dispose();
-	// 			sequence = null;
-	// 		}
-	// 		Tone.Transport.pause();
-	// 		updatePlayPauseIcons();
-	// 	}
-	// });
+	document.querySelector(".playpause").addEventListener("click", (event) => {
+		event.preventDefault();
+		document.querySelector(".playpause").classList.remove("pulse");
+		if (Tone.Transport.state !== "started") {
+			Tone.context.resume();
+			Tone.Transport.start();
+			playPattern();
+			updatePlayPauseIcons();
+			hasBeenStarted = true;
+		} else {
+			if (sequence) {
+				sequence.dispose();
+				sequence = null;
+			}
+			Tone.Transport.pause();
+			updatePlayPauseIcons();
+		}
+	});
 
 	let draggingSeedMarker = false;
 	document.querySelector(".app").addEventListener("mousedown", (evt) => {
