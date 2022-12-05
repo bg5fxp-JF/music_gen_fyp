@@ -118,6 +118,7 @@
 			rel="stylesheet"
 		/>
 		<script src="https://unpkg.com/wavesurfer.js"></script>
+		<script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
 	</head>
 
 	<body class="text-center text-bg-dark">
@@ -335,6 +336,22 @@
 				responsive: true,
 				height: 90,
 				barRadius: 4,
+				plugins: [
+					WaveSurfer.regions.create({
+						regions: [
+							{
+								start: 1, // in seconds
+								end: 3,
+								loop: true,
+								color: "hsla(400, 100%, 30%, 0.5)",
+								id: "myRegion",
+							},
+						],
+						dragSelection: {
+							slop: 5,
+						},
+					}),
+				],
 			});
 
 			let audio = new Audio();
@@ -343,11 +360,12 @@
 			wavesurfer.load(audio);
 
 			playBtn.onclick = function () {
-				wavesurfer.playPause();
+				wavesurfer.regions.list.myRegion.play();
 				if (playBtn.src.includes("play.png")) {
 					playBtn.src = "../static/images/pause.png";
 				} else {
 					playBtn.src = "../static/images/play.png";
+					wavesurfer.stop();
 				}
 			};
 
