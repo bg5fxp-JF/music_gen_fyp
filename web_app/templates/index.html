@@ -185,6 +185,23 @@
 						/>
 						<div id="waveform"></div>
 					</div>
+					<div style="margin-top: 30px">
+						<div class="control">
+							<p>
+								Zoom
+								<input
+									class="slider"
+									type="range"
+									id="zoom"
+									min="0"
+									max="500"
+									value="0"
+									step="1"
+									oninput="this.nextElementSibling.value = this.value"
+								/>
+							</p>
+						</div>
+					</div>
 				</div>
 
 				<div class="progress">
@@ -358,6 +375,13 @@
 			audio.src = "{{filePath}}";
 
 			wavesurfer.load(audio);
+
+			var zoomSlider = document.getElementById("zoom");
+
+			zoomSlider.oninput = function () {
+				var zoomLevel = Number(zoomSlider.value);
+				wavesurfer.zoom(zoomLevel);
+			};
 
 			playBtn.onclick = function () {
 				wavesurfer.regions.list.myRegion.play();
