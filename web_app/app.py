@@ -70,9 +70,13 @@ def split_audio_stems(filePath,fileName):
     # combining melody and bass stems together
     sound1 = AudioSegment.from_file("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/other.wav")
     sound2 = AudioSegment.from_file("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/bass.wav")
+    sound3 = AudioSegment.from_file("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/vocals.wav")
     combined = sound1.overlay(sound2)
+    combined = combined.overlay(sound3)
 
-    combined.export("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/combined.wav", format='wav')
+
+
+    combined.export("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/combined1.wav", format='wav')
 
 def get_bpm(fileName):
     y, sr = librosa.load("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files/"+fileName) 
@@ -138,7 +142,7 @@ def index():
         identified_genre = selected[0]
         recommended = 'Try remmixing with {}'.format(selected[1])
         split_audio_stems(filePath,fileName)
-        filePath2 = "../static/files_split/" + fileName[:-4]+"/combined.wav"
+        filePath2 = "../static/files_split/" + fileName[:-4]+"/combined1.wav"
         
         
     return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm)
