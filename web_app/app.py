@@ -34,6 +34,8 @@ class UploadFileForm(FlaskForm):
     submit = SubmitField("Upload File")
 
 
+
+
 def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=10):
     
     with contextlib.closing(wave.open(file,'r')) as f:
@@ -91,6 +93,7 @@ def index():
     filePath2 =""
     fileName = ""
     bpm = 0
+    bars_2 = 0
     form = UploadFileForm()
     if form.validate_on_submit():
         file = form.file.data # First grab the file
@@ -99,7 +102,10 @@ def index():
 
         fileName = file.filename
         file.save(filePath) # Then save the file
+        
         bpm = get_bpm(fileName)
+        bars_2 = 2*(4*(1/(bpm/60)))
+        
         mfcc = np.array(save_mfcc(filePath))
         X_test = mfcc.copy()
         X_test = X_test[... , np.newaxis]
@@ -145,7 +151,7 @@ def index():
         filePath2 = "../static/files_split/" + fileName[:-4]+"/combined1.wav"
         
         
-    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm)
+    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm, bars_2=bars_2)
 
 
 if __name__ == '__main__':

@@ -483,15 +483,15 @@ Promise.all([
 		}
 	}
 
-	function updatePlayPauseIcons() {
-		if (Tone.Transport.state === "started") {
-			document.querySelector(".playpause .pause-icon").style.display = null;
-			document.querySelector(".playpause .play-icon").style.display = "none";
-		} else {
-			document.querySelector(".playpause .play-icon").style.display = null;
-			document.querySelector(".playpause .pause-icon").style.display = "none";
-		}
-	}
+	// function updatePlayPauseIcons() {
+	// 	if (Tone.Transport.state === "started") {
+	// 		document.querySelector(".playpause .pause-icon").style.display = null;
+	// 		document.querySelector(".playpause .play-icon").style.display = "none";
+	// 	} else {
+	// 		document.querySelector(".playpause .play-icon").style.display = null;
+	// 		document.querySelector(".playpause .pause-icon").style.display = "none";
+	// 	}
+	// }
 
 	function encodeState() {
 		return Object.keys(state)
@@ -573,7 +573,7 @@ Promise.all([
 			if (!hasBeenStarted) {
 				Tone.context.resume();
 				Tone.Transport.start();
-				updatePlayPauseIcons();
+				// updatePlayPauseIcons();
 				hasBeenStarted = true;
 			}
 			if (Tone.Transport.state === "started") {
@@ -588,7 +588,7 @@ Promise.all([
 			Tone.context.resume();
 			Tone.Transport.start();
 			playPattern();
-			updatePlayPauseIcons();
+			// updatePlayPauseIcons();
 			hasBeenStarted = true;
 		} else {
 			if (sequence) {
@@ -596,7 +596,7 @@ Promise.all([
 				sequence = null;
 			}
 			Tone.Transport.pause();
-			updatePlayPauseIcons();
+			// updatePlayPauseIcons();
 		}
 	});
 
