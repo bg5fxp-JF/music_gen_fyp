@@ -1,3 +1,102 @@
+const drillTemplates = [
+	[[0, 2], [], [], [2], [], [], [2], [2], [1, 2], [], [], [2], [], [], [2]],
+	[[0, 2], [], [], [2], [], [], [2], [], [2], [], [], [2], [0, 1], [], [2]],
+	[[0, 2], [], [], [0, 2], [], [], [1, 2], [], [0], [2], [], [0], [], [], [2]],
+	[[0, 2], [], [], [0, 2], [], [], [1, 2], [], [2], [2], [0], [], [1], [], [2]],
+	[[0], [], [], [7, 8], [], [], [7, 8], [], [], [], [0], [], [7, 8], [], []],
+];
+
+const hipTemplates = [
+	[
+		[0, 2],
+		[],
+		[2],
+		[],
+		[2],
+		[],
+		[0, 2],
+		[],
+		[2, 7],
+		[],
+		[2],
+		[],
+		[0, 2],
+		[],
+		[1, 2],
+	],
+	[
+		[0, 2],
+		[],
+		[2],
+		[2],
+		[2],
+		[],
+		[1, 2],
+		[],
+		[2, 7],
+		[],
+		[2],
+		[],
+		[0, 2],
+		[],
+		[1, 2],
+	],
+	[
+		[0, 2],
+		[],
+		[1, 2],
+		[],
+		[0, 2],
+		[],
+		[2],
+		[2],
+		[0, 1, 2],
+		[2],
+		[2],
+		[0],
+		[2],
+		[],
+		[0, 2, 3],
+	],
+];
+
+const regTemplates = [
+	[
+		[0],
+		[],
+		[],
+		[1, 2],
+		[0],
+		[],
+		[1, 2],
+		[],
+		[0],
+		[],
+		[],
+		[1, 2],
+		[0],
+		[],
+		[1, 2],
+	],
+	[
+		[0],
+		[],
+		[2],
+		[1, 2],
+		[0],
+		[],
+		[1, 2],
+		[],
+		[0],
+		[2],
+		[2],
+		[1, 2],
+		[0, 2],
+		[],
+		[1, 2],
+	],
+];
+
 const DRUM_CLASSES = [
 	"Kick",
 	"Snare",
@@ -158,25 +257,55 @@ Promise.all([
 		patternLength: 16,
 		seedLength: 4,
 		swing: 0.5,
-		pattern: [
-			[0, 2],
-			[],
-			[],
-			[0, 2],
-			[],
-			[],
-			[1, 2],
-			[],
-			[2],
-			[2],
-			[0],
-			[],
-			[1],
-			[],
-			[2],
-		].concat(_.times(1, (i) => [])),
+		pattern: [].concat(_.times(16, (i) => [])),
 		tempo: parseInt(document.getElementById("tempo").value),
 	};
+
+	let templateSelect = document.querySelector(".genre_template");
+
+	function randomRange(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	templateSelect.addEventListener("change", function () {
+		let rand = 0;
+		switch (templateSelect.value) {
+			case "hiphop":
+				rand = randomRange(0, hipTemplates.length - 1);
+				state.pattern = hipTemplates[rand].concat(_.times(1, (i) => []));
+				break;
+			case "drill":
+				rand = randomRange(0, drillTemplates.length - 1);
+				state.pattern = drillTemplates[rand].concat(_.times(1, (i) => []));
+				break;
+			case "reggaeton":
+				rand = randomRange(0, regTemplates.length - 1);
+				state.pattern = regTemplates[rand].concat(_.times(1, (i) => []));
+				break;
+			case "r&b":
+				state.pattern = [
+					[0, 2],
+					[],
+					[],
+					[],
+					[2],
+					[],
+					[],
+					[],
+					[2],
+					[],
+					[],
+					[],
+					[2, 3, 7],
+					[],
+					[],
+				].concat(_.times(1, (i) => []));
+				break;
+		}
+
+		onPatternUpdated();
+	});
+
 	let stepEls = [],
 		hasBeenStarted = false,
 		sequence,
