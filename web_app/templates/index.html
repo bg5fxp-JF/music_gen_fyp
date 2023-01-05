@@ -248,7 +248,10 @@
 
 						<div class="controls">
 							<div class="control">
-								<p>
+								<p
+									class="tooltip"
+									data-tooltip="This is how dense you want the pattern to become. Higher density will mean more steps filled out in the pattern."
+								>
 									Density
 									<input
 										class="slider"
@@ -264,7 +267,10 @@
 								</p>
 							</div>
 							<div class="control">
-								<p>
+								<p
+									class="tooltip"
+									data-tooltip="This is how fast the pattern is. To play your pattern at 2x speed simply double the tempo."
+								>
 									Tempo
 									<input
 										class="slider"
@@ -280,7 +286,10 @@
 								</p>
 							</div>
 							<div class="control">
-								<p>
+								<p
+									class="tooltip"
+									data-tooltip="Changing the swing will change the rythm of the pattern."
+								>
 									Swing
 									<input
 										class="slider"
@@ -296,7 +305,10 @@
 								</p>
 							</div>
 							<div class="control">
-								<p>
+								<p
+									class="tooltip"
+									data-tooltip="Higher temperatures will make the neural network generate wilder patterns."
+								>
 									Temperature
 									<input
 										class="slider"
@@ -306,7 +318,6 @@
 										max="2"
 										value="1.1"
 										step="0.1"
-										data-tooltip="Higher temperatures will make the neural network generates wilder patterns"
 										data-delay="500"
 										oninput="this.nextElementSibling.value = this.value"
 									/>
