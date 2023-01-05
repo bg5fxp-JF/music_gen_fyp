@@ -111,8 +111,7 @@ const DRUM_CLASSES = [
 const TIME_HUMANIZATION = 0.01;
 
 let sampleBaseUrl = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/969699";
-let sampleBasePath =
-	"/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/drum_kit/hiphop";
+let sampleBasePath = "/static/drum_kit/hiphop";
 
 let reverb = new Tone.Convolver(
 	`${sampleBaseUrl}/small-drum-room.wav`
@@ -124,51 +123,115 @@ new Tone.LFO(0.13, -0.25, 0.25).connect(snarePanner.pan).start();
 
 let drumKit = [
 	new Tone.Players({
-		high: `${sampleBaseUrl}/808-kick-vh.mp3`,
-		med: `${sampleBaseUrl}/808-kick-vm.mp3`,
-		low: `${sampleBaseUrl}/808-kick-vl.mp3`,
+		high: `${sampleBasePath}/808-kick-vh.wav`,
+		med: `${sampleBasePath}/808-kick-vh.wav`,
+		low: `${sampleBasePath}/808-kick-vh.wav`,
 	}).toMaster(),
 	new Tone.Players({
-		high: `${sampleBaseUrl}/flares-snare-vh.mp3`,
-		med: `${sampleBaseUrl}/flares-snare-vm.mp3`,
-		low: `${sampleBaseUrl}/flares-snare-vl.mp3`,
+		high: `${sampleBasePath}/flares-snare-vh.wav`,
+		med: `${sampleBasePath}/flares-snare-vh.wav`,
+		low: `${sampleBasePath}/flares-snare-vh.wav`,
 	}).connect(snarePanner),
 	new Tone.Players({
-		high: `${sampleBaseUrl}/808-hihat-vh.mp3`,
-		med: `${sampleBaseUrl}/808-hihat-vm.mp3`,
-		low: `${sampleBaseUrl}/808-hihat-vl.mp3`,
+		high: `${sampleBasePath}/808-hihat-vh.wav`,
+		med: `${sampleBasePath}/808-hihat-vh.wav`,
+		low: `${sampleBasePath}/808-hihat-vh.wav`,
 	}).connect(new Tone.Panner(-0.5).connect(reverb)),
 	new Tone.Players({
-		high: `${sampleBaseUrl}/808-hihat-open-vh.mp3`,
-		med: `${sampleBaseUrl}/808-hihat-open-vm.mp3`,
-		low: `${sampleBaseUrl}/808-hihat-open-vl.mp3`,
+		high: `${sampleBasePath}/808-hihat-open-vh.wav`,
+		med: `${sampleBasePath}/808-hihat-open-vh.wav`,
+		low: `${sampleBasePath}/808-hihat-open-vh.wav`,
 	}).connect(new Tone.Panner(-0.5).connect(reverb)),
 	new Tone.Players({
-		high: `${sampleBaseUrl}/slamdam-tom-low-vh.mp3`,
-		med: `${sampleBaseUrl}/slamdam-tom-low-vm.mp3`,
-		low: `${sampleBaseUrl}/slamdam-tom-low-vl.mp3`,
+		high: `${sampleBasePath}/slamdam-tom-low-vh.wav`,
+		med: `${sampleBasePath}/slamdam-tom-low-vh.wav`,
+		low: `${sampleBasePath}/slamdam-tom-low-vh.wav`,
 	}).connect(new Tone.Panner(-0.4).connect(reverb)),
 	new Tone.Players({
-		high: `${sampleBaseUrl}/slamdam-tom-mid-vh.mp3`,
-		med: `${sampleBaseUrl}/slamdam-tom-mid-vm.mp3`,
-		low: `${sampleBaseUrl}/slamdam-tom-mid-vl.mp3`,
+		high: `${sampleBasePath}/slamdam-tom-mid-vh.wav`,
+		med: `${sampleBasePath}/slamdam-tom-mid-vh.wav`,
+		low: `${sampleBasePath}/slamdam-tom-mid-vh.wav`,
 	}).connect(reverb),
 	new Tone.Players({
-		high: `${sampleBaseUrl}/slamdam-tom-high-vh.mp3`,
-		med: `${sampleBaseUrl}/slamdam-tom-high-vm.mp3`,
-		low: `${sampleBaseUrl}/slamdam-tom-high-vl.mp3`,
+		high: `${sampleBasePath}/slamdam-tom-high-vh.wav`,
+		med: `${sampleBasePath}/slamdam-tom-high-vh.wav`,
+		low: `${sampleBasePath}/slamdam-tom-high-vh.wav`,
 	}).connect(new Tone.Panner(0.4).connect(reverb)),
 	new Tone.Players({
-		high: `${sampleBaseUrl}/909-clap-vh.mp3`,
-		med: `${sampleBaseUrl}/909-clap-vm.mp3`,
-		low: `${sampleBaseUrl}/909-clap-vl.mp3`,
+		high: `${sampleBasePath}/909-clap-vh.wav`,
+		med: `${sampleBasePath}/909-clap-vh.wav`,
+		low: `${sampleBasePath}/909-clap-vh.wav`,
 	}).connect(new Tone.Panner(0.5).connect(reverb)),
 	new Tone.Players({
-		high: `${sampleBaseUrl}/909-rim-vh.wav`,
-		med: `${sampleBaseUrl}/909-rim-vm.wav`,
-		low: `${sampleBaseUrl}/909-rim-vl.wav`,
+		high: `${sampleBasePath}/909-rim-vh.wav`,
+		med: `${sampleBasePath}/909-rim-vh.wav`,
+		low: `${sampleBasePath}/909-rim-vh.wav`,
 	}).connect(new Tone.Panner(0.5).connect(reverb)),
 ];
+let drumSelect = document.querySelector(".genre_drumkit");
+drumSelect.addEventListener("change", function () {
+	switch (drumSelect.value) {
+		case "hiphop":
+			sampleBasePath = "/static/drum_kit/hiphop";
+			break;
+		case "drill":
+			sampleBasePath = "/static/drum_kit/drill";
+		case "reggaeton":
+			sampleBasePath = "/static/drum_kit/reggaeton";
+			break;
+		case "r&b":
+			sampleBasePath = "/static/drum_kit/r&b";
+			break;
+	}
+	drumKit = [
+		new Tone.Players({
+			high: `${sampleBasePath}/808-kick-vh.wav`,
+			med: `${sampleBasePath}/808-kick-vh.wav`,
+			low: `${sampleBasePath}/808-kick-vh.wav`,
+		}).toMaster(),
+		new Tone.Players({
+			high: `${sampleBasePath}/flares-snare-vh.wav`,
+			med: `${sampleBasePath}/flares-snare-vh.wav`,
+			low: `${sampleBasePath}/flares-snare-vh.wav`,
+		}).connect(snarePanner),
+		new Tone.Players({
+			high: `${sampleBasePath}/808-hihat-vh.wav`,
+			med: `${sampleBasePath}/808-hihat-vh.wav`,
+			low: `${sampleBasePath}/808-hihat-vh.wav`,
+		}).connect(new Tone.Panner(-0.5).connect(reverb)),
+		new Tone.Players({
+			high: `${sampleBasePath}/808-hihat-open-vh.wav`,
+			med: `${sampleBasePath}/808-hihat-open-vh.wav`,
+			low: `${sampleBasePath}/808-hihat-open-vh.wav`,
+		}).connect(new Tone.Panner(-0.5).connect(reverb)),
+		new Tone.Players({
+			high: `${sampleBasePath}/slamdam-tom-low-vh.wav`,
+			med: `${sampleBasePath}/slamdam-tom-low-vh.wav`,
+			low: `${sampleBasePath}/slamdam-tom-low-vh.wav`,
+		}).connect(new Tone.Panner(-0.4).connect(reverb)),
+		new Tone.Players({
+			high: `${sampleBasePath}/slamdam-tom-mid-vh.wav`,
+			med: `${sampleBasePath}/slamdam-tom-mid-vh.wav`,
+			low: `${sampleBasePath}/slamdam-tom-mid-vh.wav`,
+		}).connect(reverb),
+		new Tone.Players({
+			high: `${sampleBasePath}/slamdam-tom-high-vh.wav`,
+			med: `${sampleBasePath}/slamdam-tom-high-vh.wav`,
+			low: `${sampleBasePath}/slamdam-tom-high-vh.wav`,
+		}).connect(new Tone.Panner(0.4).connect(reverb)),
+		new Tone.Players({
+			high: `${sampleBasePath}/909-clap-vh.wav`,
+			med: `${sampleBasePath}/909-clap-vh.wav`,
+			low: `${sampleBasePath}/909-clap-vh.wav`,
+		}).connect(new Tone.Panner(0.5).connect(reverb)),
+		new Tone.Players({
+			high: `${sampleBasePath}/909-rim-vh.wav`,
+			med: `${sampleBasePath}/909-rim-vh.wav`,
+			low: `${sampleBasePath}/909-rim-vh.wav`,
+		}).connect(new Tone.Panner(0.5).connect(reverb)),
+	];
+});
+
 let midiDrums = [36, 38, 42, 46, 41, 43, 45, 49, 51];
 let reverseMidiMapping = new Map([
 	[36, 0],

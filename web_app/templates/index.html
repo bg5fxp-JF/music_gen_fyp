@@ -223,11 +223,11 @@
 								name="genre_template"
 								id="genre_template"
 							>
+								<option value="clear">Clear Pattern</option>
 								<option value="hiphop">Hip Hop</option>
 								<option value="drill">Drill</option>
 								<option value="reggaeton">Reggaeton</option>
 								<option value="r&b">R&B</option>
-								<option value="clear">Clear Pattern</option>
 							</select>
 							<label for="bars" style="margin: auto">Bars:</label>
 							<input
@@ -314,17 +314,21 @@
 									<output>1.1</output>
 								</p>
 							</div>
-							<!-- <div class="control">
-							<a
-								class="playpause btn-floating btn-large waves-effect waves-light blue"
-							>
-								<i class="material-icons play-icon">play_arrow</i>
-								<i class="material-icons pause-icon" style="display: none"
-									>pause</i
-								>
-							</a>
-						</div> -->
 						</div>
+						<br />
+						<label for="genre_drumkit">Choose Drumkit:</label>
+						<select
+							class="genre_drumkit"
+							name="genre_drumkit"
+							id="genre_drumkit"
+						>
+							<option value="hiphop">Hip Hop</option>
+							<option value="drill">Drill</option>
+							<option value="reggaeton">Reggaeton</option>
+							<option value="r&b">R&B</option>
+						</select>
+						<br />
+						<br />
 					</div>
 				</div>
 			</main>
@@ -408,10 +412,6 @@
 				wavesurfer.stop();
 			});
 		</script>
-		<script
-			src="{{ url_for('static', filename='scripts/musicLoop.js') }}"
-			charset="utf-8"
-		></script>
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 		<script
 			type="text/javascript"
