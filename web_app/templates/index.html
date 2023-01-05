@@ -177,6 +177,21 @@
 
 				<div class="music">
 					<h5>{{fileName}}</h5>
+					<label for="bars" style="padding-left: 27vw; margin: auto"
+						>Loop Length:</label
+					>
+					<input
+						class="bars_loop"
+						style="margin: auto"
+						type="number"
+						id="bars_loop"
+						name="bars"
+						min="16"
+						max="32"
+						step="16"
+						value="16"
+						oninput="this.nextElementSibling.value = this.value"
+					/>
 					<div class="track">
 						<img
 							src="../static/images/play.png"
@@ -394,6 +409,25 @@
 						},
 					}),
 				],
+			});
+			let barSelect = document.querySelector(".bars_loop");
+			barSelect.addEventListener("change", function () {
+				let start = wavesurfer.regions.list.myRegion.start;
+				let end = 0;
+				switch (barSelect.value) {
+					case "16":
+						end = start + parseFloat("{{bars_2}}");
+						wavesurfer.regions.list.myRegion.end = end;
+
+						wavesurfer.regions.list.myRegion.updateRender();
+						break;
+					case "32":
+						end = start + parseFloat("{{bars_3}}");
+						wavesurfer.regions.list.myRegion.end = end;
+
+						wavesurfer.regions.list.myRegion.updateRender();
+						break;
+				}
 			});
 
 			let audio = new Audio();
