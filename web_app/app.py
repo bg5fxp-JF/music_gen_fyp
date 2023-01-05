@@ -26,9 +26,9 @@ app.config['UPLOAD_FOLDER'] = '/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/
 model = keras.models.load_model("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/models/music_classifier_model.h5")
 
 
-# SAMPLE_RATE = 22050
-# DURATION = 30 # seconds
-# SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
+SAMPLE_RATE = 22050
+DURATION = 30 # seconds
+SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
 class UploadFileForm(FlaskForm):
     file = FileField("File", validators=[InputRequired()])
     submit = SubmitField("Upload File")
@@ -38,16 +38,17 @@ class UploadFileForm(FlaskForm):
 
 def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=10):
     
-    with contextlib.closing(wave.open(file,'r')) as f:
-        frames = f.getnframes()
-        sample_rate = f.getframerate()
-        duration = frames / float(sample_rate)
+    # with contextlib.closing(wave.open(file,'r')) as f:
+    #     frames = f.getnframes()
+    #     sample_rate = f.getframerate()
+    #     duration = frames / float(sample_rate)
     # print(duration)
 
-    samples_per_track = sample_rate * duration
-    num_samples_per_segment = int(samples_per_track / num_segments)
+    # samples_per_track = sample_rate * duration
+    
+    num_samples_per_segment = int(SAMPLES_PER_TRACK / num_segments)
     expected_mfcc_vec_per_segment = math.ceil(num_samples_per_segment / hop_length)
-    signal, sr = librosa.load(file, sr=sample_rate)
+    signal, sr = librosa.load(file, sr=SAMPLE_RATE)
                     
     # process segments extracting mfcc and storing data
     for s in range(num_segments):
@@ -94,6 +95,7 @@ def index():
     fileName = ""
     bpm = 0
     bars_2 = 0
+    bars_3 = 0
     form = UploadFileForm()
     if form.validate_on_submit():
         file = form.file.data # First grab the file
@@ -103,8 +105,14 @@ def index():
         fileName = file.filename
         file.save(filePath) # Then save the file
         
+        # changing audio channels to mono
+        sound = AudioSegment.from_wav(filePath)
+        sound = sound.set_channels(1)
+        sound.export(filePath, format="wav")
+        
         bpm = get_bpm(fileName)
         bars_2 = 2*(4*(1/(bpm/60)))
+        bars_3 = 2*(2*(4*(1/(bpm/60))))
         
         mfcc = np.array(save_mfcc(filePath))
         X_test = mfcc.copy()
@@ -151,7 +159,7 @@ def index():
         filePath2 = "../static/files_split/" + fileName[:-4]+"/combined1.wav"
         
         
-    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm, bars_2=bars_2)
+    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm, bars_2=bars_2, bars_3=bars_3)
 
 
 if __name__ == '__main__':
