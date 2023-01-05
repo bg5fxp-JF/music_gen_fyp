@@ -111,6 +111,8 @@ const DRUM_CLASSES = [
 const TIME_HUMANIZATION = 0.01;
 
 let sampleBaseUrl = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/969699";
+let sampleBasePath =
+	"/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/drum_kit/hiphop";
 
 let reverb = new Tone.Convolver(
 	`${sampleBaseUrl}/small-drum-room.wav`
@@ -260,6 +262,7 @@ Promise.all([
 		pattern: [].concat(_.times(16, (i) => [])),
 		tempo: parseInt(document.getElementById("tempo").value),
 	};
+	Tone.Transport.bpm.value = state.tempo;
 
 	let templateSelect = document.querySelector(".genre_template");
 
@@ -300,6 +303,9 @@ Promise.all([
 					[],
 					[],
 				].concat(_.times(1, (i) => []));
+				break;
+			case "clear":
+				state.pattern = [].concat(_.times(16, (i) => []));
 				break;
 		}
 
@@ -579,7 +585,7 @@ Promise.all([
 				tempos: [
 					{
 						time: 0,
-						qpm: 120,
+						qpm: parseInt(document.getElementById("tempo").value),
 					},
 				],
 				notes: _.flatMap(pattern, (step, index) =>
