@@ -176,6 +176,7 @@ drumSelect.addEventListener("change", function () {
 			break;
 		case "drill":
 			sampleBasePath = "/static/drum_kit/drill";
+			break;
 		case "reggaeton":
 			sampleBasePath = "/static/drum_kit/reggaeton";
 			break;
