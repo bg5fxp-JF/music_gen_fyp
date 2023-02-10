@@ -39,25 +39,6 @@ class MusicGenTestCase(unittest.TestCase):
         os.remove(file)
  
 
-
-    # def test_get_bpm(self):
-    #     file = "test_file.wav"
-    #     # Creating a sample wave file
-    #     sample_rate = 22050
-    #     duration = 30
-    #     actualBpm = 80
-    #     samples_per_beat = int(sample_rate / (actualBpm / 60))
-    #     samples_per_track = sample_rate * duration
-    #     # t = np.linspace(0, duration, int(samples_per_track), endpoint=False)
-    #     # x = 0.5 * np.sin(2 * np.pi * 440 * t)
-    #     x = np.sin(2 * np.pi * np.arange(samples_per_track) / samples_per_beat)
-    #     sf.write(file, x, sample_rate)
-        
-    #     bpm = get_bpmT(file)
-    #     self.assertGreater(bpm, 0)
-        
-    #     os.remove(file)
-
     def test_get_bpm(self):
         file = "test_file.wav"
         # Creating a sample wave file
@@ -83,7 +64,6 @@ class MusicGenTestCase(unittest.TestCase):
 
         self.assertGreater(bpm, 0)
         # self.assertEqual(bpm,0)
-        
         
         os.remove(file)
 
