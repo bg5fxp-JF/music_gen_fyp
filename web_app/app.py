@@ -87,6 +87,12 @@ def get_bpm(fileName):
 
     return int(round(tempo))
 
+def get_bpmT(fileName):
+    y, sr = librosa.load(fileName) 
+    tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
+
+    return int(round(tempo))
+
 @app.route('/', methods=['GET',"POST"])
 def index():     
     identified_genre = ""
