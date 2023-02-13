@@ -404,29 +404,41 @@ Promise.all([
 	}
 
 	function playPattern() {
+		// Create a new Tone.Sequence with the given callback function
 		sequence = new Tone.Sequence(
 			(time, { drums, stepIdx }) => {
+				// Determine if the current step should be swung or not
 				let isSwung = stepIdx % 2 !== 0;
 				if (isSwung) {
+					// If the current step is swung, adjust the time by the swing value
 					time += (state.swing - 0.5) * Tone.Time("8n").toSeconds();
 				}
+				// Get the velocity for the current step
 				let velocity = getStepVelocity(stepIdx);
+				// Iterate over each drum in the current step
 				drums.forEach((d) => {
 					let humanizedTime = stepIdx === 0 ? time : humanizeTime(time);
 					outputs[activeOutput].play(d, velocity, time);
+					// Visualize the drum being played
 					visualizePlay(humanizedTime, stepIdx, d);
 				});
 			},
 			state.pattern.map((drums, stepIdx) => ({ drums, stepIdx })),
+			// The interval at which each step should be played
 			"16n"
 		).start();
 	}
 
 	function visualizePlay(time, stepIdx, drumIdx) {
+		// Schedule the visualization of the drum playing
 		Tone.Draw.schedule(() => {
+			// Return if the step element doesn't exist
 			if (!stepEls[stepIdx]) return;
+			// Set the animation time to be 2 beats
 			let animTime = Tone.Time("2n").toMilliseconds();
+			// Get the cell element for the given drum index
 			let cellEl = stepEls[stepIdx].cellEls[drumIdx];
+			// If the cell is on, animate it
 			if (cellEl.classList.contains("on")) {
 				let baseColor = stepIdx < state.seedLength ? "#32E0C4" : "#FF4D00";
 				cellEl.animate(
@@ -449,28 +461,32 @@ Promise.all([
 
 	function renderPattern(regenerating = false) {
 		let seqEl = document.querySelector(".sequencer .steps");
+		// Remove step and gutter elements that are no longer needed
 		while (stepEls.length > state.pattern.length) {
 			let { stepEl, gutterEl } = stepEls.pop();
 			stepEl.remove();
 			if (gutterEl) gutterEl.remove();
 		}
+		// Render the step elements for each step in the pattern
 		for (let stepIdx = 0; stepIdx < state.pattern.length; stepIdx++) {
 			let step = state.pattern[stepIdx];
 			let stepEl, gutterEl, cellEls;
+			// Reuse existing step and gutter elements, if they exist
 			if (stepEls[stepIdx]) {
 				stepEl = stepEls[stepIdx].stepEl;
 				gutterEl = stepEls[stepIdx].gutterEl;
 				cellEls = stepEls[stepIdx].cellEls;
 			} else {
+				// Create a new step element
 				stepEl = document.createElement("div");
 				stepEl.classList.add("step");
 				stepEl.dataset.stepIdx = stepIdx;
 				seqEl.appendChild(stepEl);
 				cellEls = [];
 			}
-
+			// Set the flex of the step element based on the swing value
 			stepEl.style.flex = stepIdx % 2 === 0 ? state.swing : 1 - state.swing;
-
+			// Create a gutter element if needed
 			if (!gutterEl && stepIdx < state.pattern.length - 1) {
 				gutterEl = document.createElement("div");
 				gutterEl.classList.add("gutter");
@@ -485,7 +501,7 @@ Promise.all([
 			} else if (gutterEl) {
 				gutterEl.classList.remove("seed-marker");
 			}
-
+			// Render the cell elements for each cell in the step
 			for (let cellIdx = 0; cellIdx < DRUM_CLASSES.length; cellIdx++) {
 				let cellEl;
 				if (cellEls[cellIdx]) {
@@ -566,18 +582,24 @@ Promise.all([
 	}
 
 	function toggleStep(cellEl) {
+		// Check if state.pattern exists and the cellEl is a cell
 		if (state.pattern && cellEl.classList.contains("cell")) {
 			let stepIdx = +cellEl.dataset.stepIdx;
 			let cellIdx = +cellEl.dataset.cellIdx;
+			// Check if the cell is currently "on"
 			let isOn = cellEl.classList.contains("on");
 			if (isOn) {
+				// Remove the cell index from the state.pattern for the current step
 				_.pull(state.pattern[stepIdx], cellIdx);
 				cellEl.classList.remove("on");
 			} else {
+				// Add the cell index to the state.pattern for the current step
 				state.pattern[stepIdx].push(cellIdx);
 				cellEl.classList.add("on");
 			}
+			// Check if the sequence exists
 			if (sequence) {
+				// Update the step in the sequence with the new state.pattern
 				sequence.at(stepIdx, { stepIdx, drums: state.pattern[stepIdx] });
 			}
 			setDensityValue();
@@ -596,10 +618,11 @@ Promise.all([
 	function updateDensityRange(
 		density = +document.querySelector("#density").value
 	) {
+		// Calculate the number of steps to decrease the density, to increase the density, and beyond the target density
 		let stepsDown = density / 0.05;
 		let stepsUp = (0.75 - density) / 0.05;
 		let stepsBeyond = 0.25 / 0.05;
-
+		// Get the current note sequence from the state
 		let emptySeq = toNoteSequence([]);
 		let fullSeq = toNoteSequence(
 			_.times(state.pattern.length, () => _.range(9))
@@ -607,26 +630,32 @@ Promise.all([
 
 		let currentSeq = toNoteSequence(state.pattern);
 
+		// Initialize the density range array
 		densityRange = [];
+		// Interpolate between the empty sequence and the current sequence to decrease the density
 		let interpsUp =
 			stepsDown > 0
 				? vae.interpolate([emptySeq, currentSeq], stepsDown)
 				: Promise.resolve([]);
+		// Interpolate between the current sequence and the full sequence to increase the density
 		let interpsDown =
 			stepsUp > 0
 				? vae.interpolate([currentSeq, fullSeq], stepsUp + stepsBeyond)
 				: Promise.resolve([]);
-
+		// After getting the interpolated sequences to decrease the density, push the current pattern into the density range
 		interpsDown
 			.then((interps) => {
 				for (let noteSeq of interps) {
+					// Add each interpolated sequence to the density range
 					densityRange.push(fromNoteSequence(noteSeq, state.pattern.length));
 				}
 			})
 			.then(() => densityRange.push(state.pattern))
+			// After pushing the current pattern, get the interpolated sequences to increase the density
 			.then(() => interpsUp)
 			.then((interps) => {
 				for (let noteSeq of interps) {
+					// Add each interpolated sequence to the density range if there are still steps left to increase the density
 					if (stepsUp-- > 0) {
 						densityRange.push(fromNoteSequence(noteSeq, state.pattern.length));
 					}
@@ -635,6 +664,7 @@ Promise.all([
 	}
 
 	function toNoteSequence(pattern) {
+		// Create a quantized note sequence from the given pattern
 		return mm.sequences.quantizeNoteSequence(
 			{
 				ticksPerQuarter: 220,
@@ -664,11 +694,16 @@ Promise.all([
 		);
 	}
 
+	// and returns an array of arrays representing the rhythm pattern
 	function fromNoteSequence({ notes }, patternLength) {
+		// initialize an empty 2D array with `patternLength` rows and empty arrays in each row
 		let res = _.times(patternLength, () => []);
 		for (let { pitch, quantizedStartStep } of notes) {
+			// push the pitch corresponding to the given `pitch` in the `notes` array
+			// to the appropriate `quantizedStartStep` row in the `res` 2D array
 			res[quantizedStartStep].push(reverseMidiMapping.get(pitch));
 		}
+		// return the `res` 2D array
 		return res;
 	}
 
@@ -678,9 +713,11 @@ Promise.all([
 	}
 
 	function setBars(newPatternLength) {
+		// Update the length of the pattern array
 		if (newPatternLength < state.patternLength) {
 			state.pattern.length = newPatternLength;
 		} else {
+			// add empty arrays to the pattern array to fill the gap
 			for (let i = state.pattern.length; i < newPatternLength; i++) {
 				state.pattern.push([]);
 			}
@@ -698,88 +735,13 @@ Promise.all([
 		}
 	}
 
-	// function updatePlayPauseIcons() {
-	// 	if (Tone.Transport.state === "started") {
-	// 		document.querySelector(".playpause .pause-icon").style.display = null;
-	// 		document.querySelector(".playpause .play-icon").style.display = "none";
-	// 	} else {
-	// 		document.querySelector(".playpause .play-icon").style.display = null;
-	// 		document.querySelector(".playpause .pause-icon").style.display = "none";
-	// 	}
-	// }
-
-	function encodeState() {
-		return Object.keys(state)
-			.reduce((a, k) => {
-				a.push(k + "=" + JSON.stringify(state[k]));
-				return a;
-			}, [])
-			.join("&");
-	}
-
-	WebMidi.enable((err) => {
-		if (err) {
-			console.error("WebMidi could not be enabled", err);
-			return;
-		}
-		document.querySelector(".webmidi-enabled").style.display = "block";
-		let outputSelector = document.querySelector(".midi-output");
-
-		function onOutputsChange() {
-			while (outputSelector.firstChild) {
-				outputSelector.firstChild.remove();
-			}
-			let internalOption = document.createElement("option");
-			internalOption.value = "internal";
-			internalOption.innerText = "Internal drumkit";
-			outputSelector.appendChild(internalOption);
-			for (let output of WebMidi.outputs) {
-				let option = document.createElement("option");
-				option.value = output.id;
-				option.innerText = output.name;
-				outputSelector.appendChild(option);
-			}
-			onActiveOutputChange("internal");
-		}
-
-		function onActiveOutputChange(id) {
-			if (activeOutput !== "internal") {
-				outputs[activeOutput] = null;
-			}
-			activeOutput = id;
-			if (activeOutput !== "internal") {
-				let output = WebMidi.getOutputById(id);
-				outputs[id] = {
-					play: (drumIdx, velo, time) => {
-						let delay = (time - Tone.now()) * 1000;
-						let duration = Tone.Time("16n").toMilliseconds();
-						let velocity = { high: 1, med: 0.75, low: 0.5 };
-						output.playNote(midiDrums[drumIdx], 1, {
-							time: delay > 0 ? `+${delay}` : WebMidi.now,
-							velocity,
-							duration,
-						});
-					},
-				};
-			}
-			for (let option of Array.from(outputSelector.children)) {
-				option.selected = option.value === id;
-			}
-		}
-
-		onOutputsChange();
-		WebMidi.addListener("connected", onOutputsChange);
-		WebMidi.addListener("disconnected", onOutputsChange);
-		$(outputSelector)
-			.on("change", (evt) => onActiveOutputChange(evt.target.value))
-			.material_select();
-	});
-
 	document.querySelector(".app").addEventListener("click", (event) => {
 		if (event.target.classList.contains("cell")) {
 			toggleStep(event.target);
 		}
 	});
+
+	// generates the pattern
 	document.querySelector(".regenerate").addEventListener("click", (event) => {
 		event.preventDefault();
 		event.currentTarget.classList.remove("pulse");
@@ -788,7 +750,7 @@ Promise.all([
 			if (!hasBeenStarted) {
 				Tone.context.resume();
 				Tone.Transport.start();
-				// updatePlayPauseIcons();
+
 				hasBeenStarted = true;
 			}
 			if (Tone.Transport.state === "started") {
@@ -796,6 +758,8 @@ Promise.all([
 			}
 		});
 	});
+
+	// plays and pauses the drums
 	document.querySelector(".playpause").addEventListener("click", (event) => {
 		event.preventDefault();
 		document.querySelector(".playpause").classList.remove("pulse");
@@ -803,7 +767,7 @@ Promise.all([
 			Tone.context.resume();
 			Tone.Transport.start();
 			playPattern();
-			// updatePlayPauseIcons();
+
 			hasBeenStarted = true;
 		} else {
 			if (sequence) {
@@ -811,7 +775,6 @@ Promise.all([
 				sequence = null;
 			}
 			Tone.Transport.pause();
-			// updatePlayPauseIcons();
 		}
 	});
 
@@ -830,12 +793,16 @@ Promise.all([
 		draggingSeedMarker = false;
 	});
 	document.querySelector(".app").addEventListener("mouseover", (evt) => {
+		// Check if the user is dragging the seed marker
 		if (draggingSeedMarker) {
 			let el = evt.target;
+			// Keep moving up the DOM tree until a step element is found
 			while (el) {
 				if (el.classList.contains("step")) {
+					// Get the index of the step that the user is hovering over
 					let stepIdx = +el.dataset.stepIdx;
 					if (stepIdx > 0) {
+						// Update the seed length if the step index is greater than 0
 						state.seedLength = stepIdx;
 						renderPattern();
 					}
@@ -845,6 +812,7 @@ Promise.all([
 			}
 		}
 	});
+	// updating density from slider
 	document.querySelector("#density").addEventListener("input", (evt) => {
 		let newDensity = +evt.target.value;
 		let patternIndex = Math.round(newDensity / 0.05);
@@ -865,18 +833,22 @@ Promise.all([
 			}
 		}
 	});
+	// updating swing from slider
 	document
 		.querySelector("#swing")
 		.addEventListener("input", (evt) => setSwing(+evt.target.value));
+	// updating temperature from slider
 	document
 		.querySelector("#temperature")
 		.addEventListener("input", (evt) => (temperature = +evt.target.value));
+	// updating tempo from slider
 	document
 		.querySelector("#tempo")
 		.addEventListener(
 			"input",
 			(evt) => (Tone.Transport.bpm.value = state.tempo = +evt.target.value)
 		);
+	// updating bar length
 	document
 		.querySelector("#bars")
 		.addEventListener("input", (evt) => setBars(+evt.target.value));
