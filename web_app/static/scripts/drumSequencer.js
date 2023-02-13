@@ -314,6 +314,7 @@ let rnn = new mm.MusicRNN(
 let vae = new mm.MusicVAE(
 	"https://storage.googleapis.com/download.magenta.tensorflow.org/tfjs_checkpoints/music_vae/drums_2bar_hikl_small"
 );
+
 Promise.all([
 	rnn.initialize(),
 	vae.initialize(),
