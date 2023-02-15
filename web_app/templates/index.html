@@ -353,6 +353,17 @@
 							<option value="reggaeton">Reggaeton</option>
 							<option value="r&b">R&B</option>
 						</select>
+
+						<a
+							id="download-link"
+							style="
+								display: none;
+								font-size: 20px;
+								color: white;
+								padding-bottom: 150px;
+							"
+							>Export as WAV</a
+						>
 						<br />
 						<br />
 					</div>
@@ -475,7 +486,7 @@
 			src="{{ url_for('static', filename='scripts/drumSequencer.js') }}"
 			charset="utf-8"
 		></script>
-
+		<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 		<script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
 	</body>
 </html>

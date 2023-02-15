@@ -760,6 +760,11 @@ Promise.all([
 		});
 	});
 
+	let recorder = new Recorder(Tone.Master, {
+		numChannels: 2, // stereo
+		mimeType: "audio/wav", // set the output format to WAV
+	});
+
 	// plays and pauses the drums
 	document.querySelector(".playpause").addEventListener("click", (event) => {
 		event.preventDefault();
@@ -767,6 +772,8 @@ Promise.all([
 		if (Tone.Transport.state !== "started") {
 			Tone.context.resume();
 			Tone.Transport.start();
+			recorder.clear();
+			recorder.record();
 			playPattern();
 
 			hasBeenStarted = true;
@@ -776,6 +783,17 @@ Promise.all([
 				sequence = null;
 			}
 			Tone.Transport.pause();
+			recorder.stop();
+			// export the recorded audio as a WAV file
+			recorder.exportWAV(function (blob) {
+				// create a download link for the exported audio
+				let downloadLink = document.getElementById("download-link");
+				downloadLink.style.display = "inline-block";
+				downloadLink.href = URL.createObjectURL(blob);
+				downloadLink.download = "drumkit.wav";
+
+				document.body.appendChild(downloadLink);
+			});
 		}
 	});
 
