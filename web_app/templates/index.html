@@ -199,6 +199,7 @@
 							class="playpause"
 						/>
 						<div id="waveform"></div>
+						<button id="reverseButton" class="reverseButton"></button>
 					</div>
 					<div style="margin-top: 30px">
 						<div class="control">
@@ -413,6 +414,8 @@
 				responsive: true,
 				height: 90,
 				barRadius: 4,
+				backend: "WebAudio",
+				normalize: true,
 				plugins: [
 					WaveSurfer.regions.create({
 						regions: [
@@ -458,9 +461,11 @@
 			audio.playbackRate = parseInt(initialBpm) / 120;
 			wavesurfer.load(audio);
 
+			let isReversed = false;
 			var zoomSlider = document.getElementById("zoom");
 			var bpmCheckbox = document.getElementById("bpm-checkbox");
 			var bpmSlider = document.getElementById("tempo");
+			const reverseButton = document.getElementById("reverseButton");
 
 			bpmCheckbox.addEventListener("change", () => {
 				if (bpmCheckbox.checked) {
@@ -479,6 +484,25 @@
 				var zoomLevel = Number(zoomSlider.value);
 				wavesurfer.zoom(zoomLevel);
 			};
+
+			reverseButton.addEventListener("click", function () {
+				if (!isReversed) {
+					reverseButton.classList.toggle("reverse");
+					wavesurfer.backend.buffer.getChannelData(0).reverse();
+					wavesurfer.backend.buffer.getChannelData(1).reverse();
+					wavesurfer.seekTo(1);
+
+					isReversed = true;
+				} else {
+					reverseButton.classList.toggle("forward");
+
+					wavesurfer.backend.buffer.getChannelData(0).reverse();
+					wavesurfer.backend.buffer.getChannelData(1).reverse();
+					wavesurfer.seekTo(0);
+
+					isReversed = false;
+				}
+			});
 
 			playBtn.onclick = function () {
 				wavesurfer.regions.list.myRegion.play();

@@ -319,3 +319,25 @@ body {
 	opacity: 1;
 	visibility: visible;
 }
+
+.reverseButton {
+	position: relative;
+	top: -40;
+	right: 13;
+	background-image: url("../images/reverse.png");
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-size: contain;
+	border: none;
+	width: 25px;
+	height: 15px;
+	padding: 0;
+	cursor: pointer;
+}
+
+.reverseButton.reverse {
+	background-image: url("../images/forward.png");
+}
+.reverseButton.forward {
+	background-image: url("../images/reverse.png");
+}
