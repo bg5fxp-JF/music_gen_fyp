@@ -322,7 +322,7 @@ body {
 
 .reverseButton {
 	position: relative;
-	top: -40;
+	top: -50;
 	right: 13;
 	background-image: url("../images/reverse.png");
 	background-color: transparent;

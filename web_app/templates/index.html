@@ -201,8 +201,8 @@
 						<div id="waveform"></div>
 						<button id="reverseButton" class="reverseButton"></button>
 					</div>
-					<div style="margin-top: 30px">
-						<div class="control">
+					<div class="row" style="margin-top: 30px">
+						<div class="col control">
 							<p>
 								Zoom
 								<input
@@ -213,6 +213,21 @@
 									max="500"
 									value="0"
 									step="1"
+									oninput="this.nextElementSibling.value = this.value"
+								/>
+							</p>
+						</div>
+						<div class="col control">
+							<p>
+								Volume
+								<input
+									class="slider"
+									type="range"
+									min="-12"
+									max="12"
+									value="0"
+									step="0.1"
+									id="volSlider"
 									oninput="this.nextElementSibling.value = this.value"
 								/>
 							</p>
@@ -406,6 +421,7 @@
 		</script>
 		<script type="text/javascript">
 			var playBtn = document.getElementById("playBtn");
+
 			var wavesurfer = WaveSurfer.create({
 				container: "#waveform",
 				waveColor: "white",
@@ -466,6 +482,20 @@
 			var bpmCheckbox = document.getElementById("bpm-checkbox");
 			var bpmSlider = document.getElementById("tempo");
 			const reverseButton = document.getElementById("reverseButton");
+
+			var volSlider = document.querySelector("#volSlider");
+			const volControl = wavesurfer.backend.ac.createGain();
+			volControl.gain.value = 1;
+
+			// Connect vol control to wavesurfer
+			wavesurfer.backend.setFilter(volControl);
+
+			volSlider.addEventListener("input", function () {
+				const volValue = parseInt(volSlider.value);
+				const volRatio = Math.pow(2, volValue / 12);
+
+				volControl.gain.value = volhRatio;
+			});
 
 			bpmCheckbox.addEventListener("change", () => {
 				if (bpmCheckbox.checked) {
