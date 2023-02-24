@@ -494,7 +494,7 @@
 				const volValue = parseInt(volSlider.value);
 				const volRatio = Math.pow(2, volValue / 12);
 
-				volControl.gain.value = volhRatio;
+				volControl.gain.value = volRatio;
 			});
 
 			bpmCheckbox.addEventListener("change", () => {
