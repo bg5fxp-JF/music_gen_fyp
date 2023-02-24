@@ -1,4 +1,3 @@
-import json
 import numpy as np
 from flask import request
 from flask import Flask, render_template
@@ -9,12 +8,8 @@ import os
 from wtforms.validators import InputRequired
 import librosa
 import math
-import wave
-import contextlib
 from pydub import AudioSegment
 from spleeter.separator import Separator
-import pickle
-import joblib
 from tensorflow import keras
 
 app = Flask(__name__)

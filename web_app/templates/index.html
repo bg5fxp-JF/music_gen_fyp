@@ -265,25 +265,6 @@
 							<div class="control">
 								<p
 									class="tooltip"
-									data-tooltip="This is how dense you want the pattern to become. Higher density will mean more steps filled out in the pattern."
-								>
-									Density
-									<input
-										class="slider"
-										type="range"
-										id="density"
-										min="0"
-										max="0.75"
-										value="0"
-										step="0.05"
-										oninput="this.nextElementSibling.value = this.value"
-									/>
-									<output>0</output>
-								</p>
-							</div>
-							<div class="control">
-								<p
-									class="tooltip"
 									data-tooltip="This is how fast the pattern is. To play your pattern at 2x speed simply double the tempo."
 								>
 									Tempo
@@ -299,6 +280,10 @@
 									/>
 									<output>{{bpm}}</output>
 								</p>
+							</div>
+							<div style="width: 50px">
+								<input type="checkbox" id="bpm-checkbox" />
+								<label for="bpm-checkbox">Adjust audio speed with BPM</label>
 							</div>
 							<div class="control">
 								<p
@@ -317,6 +302,30 @@
 										oninput="this.nextElementSibling.value = this.value"
 									/>
 									<output>0.55</output>
+								</p>
+							</div>
+						</div>
+						<br />
+
+						<h5>Controls For AI Generation</h5>
+						<div class="controls">
+							<div class="control">
+								<p
+									class="tooltip"
+									data-tooltip="This is how dense you want the pattern to become. Higher density will mean more steps filled out in the pattern."
+								>
+									Density
+									<input
+										class="slider"
+										type="range"
+										id="density"
+										min="0"
+										max="0.75"
+										value="0"
+										step="0.05"
+										oninput="this.nextElementSibling.value = this.value"
+									/>
+									<output>0</output>
 								</p>
 							</div>
 							<div class="control">
@@ -360,7 +369,7 @@
 								display: none;
 								font-size: 20px;
 								color: white;
-								padding-bottom: 150px;
+								padding-bottom: 190px;
 							"
 							>Export as WAV</a
 						>
@@ -444,10 +453,28 @@
 			let audio = new Audio();
 			audio.src = "{{filePath}}";
 
+			let initialBpm = "{{bpm}}";
+
+			audio.playbackRate = parseInt(initialBpm) / 120;
 			wavesurfer.load(audio);
 
 			var zoomSlider = document.getElementById("zoom");
+			var bpmCheckbox = document.getElementById("bpm-checkbox");
+			var bpmSlider = document.getElementById("tempo");
 
+			bpmCheckbox.addEventListener("change", () => {
+				if (bpmCheckbox.checked) {
+					// Checkbox is checked, update playback rate to match slider value
+					wavesurfer.setPlaybackRate(bpmSlider.value / parseInt(initialBpm));
+				}
+			});
+
+			bpmSlider.addEventListener("input", () => {
+				if (bpmCheckbox.checked) {
+					let ratio = bpmSlider.value / parseInt(initialBpm);
+					wavesurfer.setPlaybackRate(ratio);
+				}
+			});
 			zoomSlider.oninput = function () {
 				var zoomLevel = Number(zoomSlider.value);
 				wavesurfer.zoom(zoomLevel);
