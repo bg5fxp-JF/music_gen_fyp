@@ -91,6 +91,7 @@ def get_bpmT(fileName):
 @app.route('/', methods=['GET',"POST"])
 def index():     
     identified_genre = ""
+    runners_up_text = ""
     recommended = ""
     filePath2 =""
     fileName = ""
@@ -129,6 +130,13 @@ def index():
         # get index with max value
         predicted_index = np.argmax(prediction, axis=1)
 
+        # get indexs of top 3 runners up
+        runners_up_indexs = np.argsort(prediction).flatten().tolist()
+        runners_up_indexs = runners_up_indexs[::-1]
+        runners_up_indexs = runners_up_indexs[1:4]
+        
+
+       
         pop = ['Pop','hiphop, r&b or reggaeton']
         metal = ['Metal','hiphop or drill']
         disco = ['Disco','r&b or reggaeton']
@@ -153,14 +161,24 @@ def index():
             9:jazz
         }
         selected = switcher.get((int)(predicted_index),"Can't Identify")
-        n = len(selected)
+       
+       
+        #  get the runner up names
+        runners_up = []
+        for i in runners_up_indexs:
+            runners_up.append(switcher.get((int)(i),"Can't Identify")[0])
+
+
+      
         identified_genre = selected[0]
         recommended = 'Try remmixing with {}'.format(selected[1])
+        runners_up_text = "Runners up to prediction: {}, {} or {}".format(runners_up[0],runners_up[1],runners_up[2])
+       
         split_audio_stems(filePath,fileName)
         filePath2 = "../static/files_split/" + fileName[:-4]+"/combined1.wav"
         
         
-    return render_template('index.html',form=form,prediction_text = identified_genre,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm, bars_2=bars_2, bars_3=bars_3)
+    return render_template('index.html',form=form,prediction_text = identified_genre,runners_up_text=runners_up_text,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm, bars_2=bars_2, bars_3=bars_3)
 
 
 if __name__ == '__main__':
