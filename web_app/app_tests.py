@@ -45,12 +45,6 @@ class MusicGenTestCase(unittest.TestCase):
         sample_rate = 22050
         duration = 30
         actualBpm = 90
-        # samples_per_beat = int(sample_rate / (actualBpm / 60))
-        # samples_per_track = sample_rate * duration
-        # t = np.linspace(0, duration, int(samples_per_track), endpoint=False)
-        # x = 0.5 * np.sin(2 * np.pi * 440 * t)
-        # x = np.sin(2 * np.pi * np.arange(samples_per_track) / samples_per_beat)
-        # sf.write(file, x, sample_rate)
         
         t = np.linspace(0, duration, int(duration * sample_rate), False)
         tick = scipy.signal.square(2 * np.pi * 2 * t)
@@ -63,7 +57,7 @@ class MusicGenTestCase(unittest.TestCase):
         bpm = get_bpmT(file)
 
         self.assertGreater(bpm, 0)
-        # self.assertEqual(bpm,0)
+        self.assertEqual(bpm,90)
         
         os.remove(file)
 

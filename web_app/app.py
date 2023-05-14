@@ -33,14 +33,6 @@ class UploadFileForm(FlaskForm):
 
 def save_mfcc(file, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=10):
     
-    # with contextlib.closing(wave.open(file,'r')) as f:
-    #     frames = f.getnframes()
-    #     sample_rate = f.getframerate()
-    #     duration = frames / float(sample_rate)
-    # print(duration)
-
-    # samples_per_track = sample_rate * duration
-    
     num_samples_per_segment = int(SAMPLES_PER_TRACK / num_segments)
     expected_mfcc_vec_per_segment = math.ceil(num_samples_per_segment / hop_length)
     signal, sr = librosa.load(file, sr=SAMPLE_RATE)
@@ -71,8 +63,6 @@ def split_audio_stems(filePath,fileName):
     sound3 = AudioSegment.from_file("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/vocals.wav")
     combined = sound1.overlay(sound2)
     combined = combined.overlay(sound3)
-
-
 
     combined.export("/Users/bg5fxp_jf/Documents/music_gen_fyp/web_app/static/files_split/"+fileName[:-4]+"/combined1.wav", format='wav')
 
@@ -178,7 +168,8 @@ def index():
         filePath2 = "../static/files_split/" + fileName[:-4]+"/combined1.wav"
         
         
-    return render_template('index.html',form=form,prediction_text = identified_genre,runners_up_text=runners_up_text,  recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm, bars_2=bars_2, bars_3=bars_3)
+    return render_template('index.html',form=form,prediction_text = identified_genre,runners_up_text=runners_up_text, 
+                            recommend_text=recommended, filePath=filePath2, fileName=fileName, bpm=bpm, bars_2=bars_2, bars_3=bars_3)
 
 
 if __name__ == '__main__':
